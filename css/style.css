@@ -1262,10 +1262,8 @@ button, input, select {
   transition: opacity 0.4s ease;
 }
 
-.lighting-move-border-hover:hover::before,
-.lighting-move-border-hover.is-inview::before,
-.lighting-move-border-hover.is-active::before,
-.section-b2b.is-inview .b2b-col.lighting-move-border-hover::before {
+/* No Desktop: Ativação EXCLUSIVA no :hover */
+.lighting-move-border-hover:hover::before {
   opacity: 1;
   animation-play-state: running;
 }
@@ -2959,10 +2957,8 @@ button, input, select {
   transition: transform 0.35s ease, box-shadow 0.35s ease, border-color 0.35s ease;
 }
 
-.b2b-col:hover,
-.b2b-col.is-inview,
-.b2b-col.is-active,
-.section-b2b.is-inview .b2b-col {
+/* No Desktop: Destaque de borda e sombra ativados apenas no :hover */
+.b2b-col:hover {
   border-color: transparent;
   box-shadow: 0 26px 55px rgba(0, 0, 0, 0.85), 0 0 30px rgba(232, 89, 12, 0.22);
 }
@@ -3496,26 +3492,39 @@ button, input, select {
     padding-right: 12px;
   }
 
+  /* Abas do ecossistema: 4 abas centralizadas e ajustadas à largura da tela (sem sair da tela) */
   .ecosystem-tabs-wrap {
-    justify-content: flex-start;
-    padding: 0 0.5rem 0.5rem 0.5rem;
+    justify-content: center;
+    padding: 0 0.25rem;
     margin-bottom: 1.8rem;
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
+    overflow-x: visible;
+    width: 100%;
+    box-sizing: border-box;
   }
 
   .ecosystem-tabs {
-    padding-left: 0.5rem;
-    padding-right: 0.5rem;
-    min-width: max-content;
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    padding-left: 0;
+    padding-right: 0;
   }
 
   .ecosystem-tab {
-    padding: 0.65rem 1.1rem 0.85rem 1.1rem;
+    flex: 1 1 0;
+    min-width: 0;
+    padding: 0.6rem 0.2rem 0.85rem 0.2rem;
+    text-align: center;
   }
 
   .ecosystem-tab__label {
-    font-size: 0.82rem;
+    font-size: 0.68rem;
+    letter-spacing: 0.04em;
+    line-height: 1.25;
+    white-space: normal;
+    text-align: center;
   }
 
   .circuit-wrapper {
@@ -3529,20 +3538,48 @@ button, input, select {
     width: 100% !important;
     max-width: 100% !important;
     padding: 0.5rem 0;
-    grid-template-columns: repeat(3, 1fr);
-    grid-template-rows: auto 84px auto;
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+    grid-template-rows: 76px 84px 76px !important;
     gap: 1.8rem 0.45rem;
   }
 
+  /* Todos os cards com tamanho exatamente uniforme no mobile */
   .circuit-card {
-    min-height: 68px;
-    padding: 0.65rem 0.3rem;
+    width: 100% !important;
+    height: 76px !important;
+    min-height: 76px !important;
+    max-height: 76px !important;
+    min-width: 0 !important;
+    padding: 0.4rem 0.25rem !important;
     border-radius: 8px;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    text-align: center !important;
+    box-sizing: border-box !important;
+    overflow: hidden;
+  }
+
+  .circuit-card__content {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
   }
 
   .circuit-card__title {
-    font-size: clamp(0.68rem, 2.5vw, 0.8rem);
+    width: 100%;
+    font-size: clamp(0.66rem, 2.3vw, 0.78rem);
     line-height: 1.25;
+    text-align: center;
+    word-break: normal;
+    overflow-wrap: break-word;
+    hyphens: auto;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
   }
 
   .circuit-chip-slot {
@@ -3588,16 +3625,20 @@ button, input, select {
   }
 
   .circuit-board {
+    grid-template-rows: 72px 76px 72px !important;
     gap: 1.6rem 0.35rem;
   }
 
+  /* Mantém todos os cards com altura idêntica de 72px em telas pequenas */
   .circuit-card {
-    min-height: 62px;
-    padding: 0.55rem 0.2rem;
+    height: 72px !important;
+    min-height: 72px !important;
+    max-height: 72px !important;
+    padding: 0.35rem 0.2rem !important;
   }
 
   .circuit-card__title {
-    font-size: 0.65rem;
+    font-size: clamp(0.62rem, 2.5vw, 0.7rem);
     line-height: 1.2;
   }
 
@@ -4204,3 +4245,120 @@ button, input, select {
 
 
 
+/* ==========================================================================
+   MOBILE — SEM SCROLL EFFECT / OTIMIZAÇÕES DE PERFORMANCE
+   - #experiencia: sem pin/scrub; navegação só por botões ou arrasto lateral
+   - #galeria-turismo: sem pin/scrub; scroll horizontal nativo por arrasto
+   - #implantacao (.circuit-wrapper): versão leve (sem blur/filters/animações pesadas)
+   ========================================================================== */
+@media (max-width: 768px) {
+  /* ---- #experiencia: controles mais visíveis (subidos ~25%, ainda na parte baixa) ---- */
+  .section-swipe-slider {
+    height: 100vh;
+    height: 100svh;
+    min-height: 100vh;
+    min-height: 100svh;
+    max-height: none;
+  }
+
+  .section-swipe-slider .swipe-bottom-controls {
+    bottom: 25%;
+  }
+
+  /* ---- #galeria-turismo: arrastar para os lados (scroll horizontal nativo) ---- */
+  .section-horiz-gallery {
+    min-height: 0;
+  }
+
+  .horiz-gallery-wrapper {
+    overflow-x: auto;
+    overflow-y: hidden;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior-x: contain;
+    scroll-snap-type: x mandatory;
+    scroll-padding-left: 20px;
+    scrollbar-width: none;
+    touch-action: pan-x pan-y;
+    cursor: grab;
+  }
+
+  .horiz-gallery-wrapper::-webkit-scrollbar {
+    display: none;
+  }
+
+  .horiz-gallery-strip {
+    transform: none !important;
+    will-change: auto;
+  }
+
+  .horiz-card {
+    scroll-snap-align: start;
+  }
+
+  /* ---- #implantacao: circuito leve ---- */
+  .circuit-wrapper {
+    overflow-x: hidden;
+    contain: layout paint;
+  }
+
+  /* Cards: sem backdrop-filter, sem halo blur, sombra simples e sem transições de transform */
+  .circuit-card {
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    box-shadow: 0 6px 14px rgba(0, 0, 0, 0.5);
+    transition: none;
+  }
+
+  .circuit-card::after {
+    display: none;
+  }
+
+  .circuit-card:hover,
+  .circuit-card.is-receiving {
+    transform: none;
+    box-shadow: 0 6px 14px rgba(0, 0, 0, 0.5);
+  }
+
+  .circuit-card__title {
+    will-change: auto;
+  }
+
+  /* Chip: borda estática (sem animação Houdini do conic-gradient a cada frame) e sombras leves */
+  .circuit-chip {
+    --gradient-angle: 150deg;
+    animation: none;
+    box-shadow: 0 0 18px rgba(232, 89, 12, 0.45), inset 0 0 10px rgba(255, 255, 255, 0.7);
+    transition: none;
+  }
+
+  .circuit-chip::after {
+    animation: none;
+    filter: none;
+    opacity: 0;
+  }
+
+  .circuit-chip:hover {
+    transform: none;
+  }
+
+  /* SVG: remove drop-shadow filters das trilhas e pinos */
+  .circuit-line,
+  .circuit-pin {
+    filter: none;
+  }
+
+  /* ---- #corporate: no mobile ativa o lighting-border e sombra ao pousar na tela (sem mouse) ---- */
+  .b2b-col.is-inview,
+  .b2b-col.is-active,
+  .section-b2b.is-inview .b2b-col {
+    border-color: transparent;
+    box-shadow: 0 26px 55px rgba(0, 0, 0, 0.85), 0 0 30px rgba(232, 89, 12, 0.22);
+  }
+
+  .b2b-col.lighting-move-border-hover.is-inview::before,
+  .b2b-col.lighting-move-border-hover.is-active::before,
+  .section-b2b.is-inview .b2b-col.lighting-move-border-hover::before {
+    opacity: 1;
+    animation-play-state: running;
+  }
+}

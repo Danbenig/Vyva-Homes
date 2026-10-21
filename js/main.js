@@ -45,11 +45,26 @@ $(document).ready(function () {
       requestAnimationFrame(raf);
     }
 
-    // Suporte a âncoras suaves com Lenis (ex: #hero, #destinos, #reservas, etc.)
+    // Suporte a âncoras suaves com Lenis (ex: #hero, #destinos, #ecossistema, #reservas, etc.)
     document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
       anchor.addEventListener('click', function (e) {
         const targetId = this.getAttribute('href');
-        if (targetId && targetId !== '#' && document.querySelector(targetId)) {
+        if (!targetId || targetId === '#') return;
+
+        // Se for atalho direto para uma das abas do ecossistema (#vyva-decor, #by-vyva, #vyva-connect, #vyva-resort)
+        const tabKey = targetId.replace('#', '');
+        const matchingTab = document.querySelector(`.ecosystem-tab[data-tab="${tabKey}"]`);
+        if (matchingTab) {
+          e.preventDefault();
+          const targetSection = document.getElementById('ecossistema') || document.getElementById('implantacao');
+          if (targetSection) {
+            lenis.scrollTo(targetSection, { offset: -20, duration: 1.2 });
+          }
+          matchingTab.click();
+          return;
+        }
+
+        if (document.querySelector(targetId)) {
           e.preventDefault();
           lenis.scrollTo(targetId, { offset: 0, duration: 1.2 });
         }
@@ -155,6 +170,12 @@ $(document).ready(function () {
       $navMenu.removeClass('is-open');
       $navToggle.removeClass('is-active');
     }
+  });
+
+  // Fecha o menu mobile automaticamente ao clicar em qualquer link de navegação
+  $navMenu.find('a').on('click', function () {
+    $navMenu.removeClass('is-open');
+    $navToggle.removeClass('is-active');
   });
 
   // 4. TYPEWRITER EFFECT NA HERO (Baseado no modelo de referência)
@@ -481,6 +502,9 @@ $(document).ready(function () {
 
       let currentActiveIndex = 0;
 
+      // MOBILE: sem scroll effect (sem pin/scrub). Navegação somente por botões e arrasto lateral.
+      const isMobile = window.matchMedia('(max-width: 768px)').matches;
+
       // Estado inicial dos slides (empilhados com zIndex crescente)
       slides.forEach((slide, i) => {
         gsap.set(slide, { zIndex: i + 1, autoAlpha: 1 });
@@ -501,7 +525,8 @@ $(document).ready(function () {
 
       // Master Timeline vinculada ao Scroll (usando fromTo imutável para blindar contra refresh)
       const masterTL = gsap.timeline({
-        defaults: { ease: 'none' }
+        defaults: { ease: 'none' },
+        paused: isMobile
       });
 
       const slideRestTimes = [0];
@@ -573,56 +598,88 @@ $(document).ready(function () {
         slideRestTimes[i] = startTime + 1 + holdDuration * 0.5;
       }
 
+      // Atualiza pill/contador ativos conforme o tempo atual da timeline
+      function applyActiveFromTime(currentTime) {
+        let activeIdx = 0;
+        for (let i = 1; i < slides.length; i++) {
+          if (currentTime >= transMidTimes[i]) {
+            activeIdx = i;
+          } else {
+            break;
+          }
+        }
+        if (activeIdx !== currentActiveIndex) {
+          currentActiveIndex = activeIdx;
+          dots.forEach((dot, idx) => {
+            dot.classList.toggle('is-active', idx === activeIdx);
+          });
+          if (currentCounters && currentCounters.length) {
+            const formattedCounter = String(activeIdx + 1).padStart(2, '0');
+            currentCounters.forEach(counter => {
+              counter.textContent = formattedCounter;
+            });
+          }
+        }
+      }
+
       // Distância de rolagem do travamento (pin) na tela
       const getTotalScroll = () => (slides.length - 1) * Math.max(600, Math.round(window.innerHeight * 0.72));
 
-      // ScrollTrigger oficial com PIN e SCRUB (refreshPriority: 10 para calcular na ordem do DOM antes de #galeria-turismo)
-      const swipeST = ScrollTrigger.create({
-        trigger: section,
-        start: 'top top',
-        end: () => '+=' + getTotalScroll(),
-        pin: true,
-        pinSpacing: true,
-        anticipatePin: 0,
-        refreshPriority: 10,
-        animation: masterTL,
-        scrub: 0.65,
-        invalidateOnRefresh: false,
-        onToggle: (self) => {
-          if (self.isActive) {
-            $('#mainNavbar').addClass('is-hidden');
-          }
-        },
-        onUpdate: (self) => {
-          if (self.isActive) {
-            $('#mainNavbar').addClass('is-hidden');
-          }
-          const currentTime = self.progress * masterTL.duration();
-          let activeIdx = 0;
-          for (let i = 1; i < slides.length; i++) {
-            if (currentTime >= transMidTimes[i]) {
-              activeIdx = i;
-            } else {
-              break;
+      // DESKTOP: ScrollTrigger oficial com PIN e SCRUB (refreshPriority: 10 para calcular na ordem do DOM antes de #galeria-turismo)
+      let swipeST = null;
+      if (!isMobile) {
+        swipeST = ScrollTrigger.create({
+          trigger: section,
+          start: 'top top',
+          end: () => '+=' + getTotalScroll(),
+          pin: true,
+          pinSpacing: true,
+          anticipatePin: 0,
+          refreshPriority: 10,
+          animation: masterTL,
+          scrub: 0.65,
+          invalidateOnRefresh: false,
+          onToggle: (self) => {
+            if (self.isActive) {
+              $('#mainNavbar').addClass('is-hidden');
             }
-          }
-          if (activeIdx !== currentActiveIndex) {
-            currentActiveIndex = activeIdx;
-            dots.forEach((dot, idx) => {
-              dot.classList.toggle('is-active', idx === activeIdx);
-            });
-            if (currentCounters && currentCounters.length) {
-              const formattedCounter = String(activeIdx + 1).padStart(2, '0');
-              currentCounters.forEach(counter => {
-                counter.textContent = formattedCounter;
-              });
+          },
+          onUpdate: (self) => {
+            if (self.isActive) {
+              $('#mainNavbar').addClass('is-hidden');
             }
+            applyActiveFromTime(self.progress * masterTL.duration());
           }
-        }
-      });
+        });
+      }
+
+      // MOBILE: transição programática (sem scroll) até o platô do slide alvo
+      let mobileTargetIndex = 0;
+      let mobileNavTween = null;
+      function goToSlideMobile(targetIdx) {
+        targetIdx = Math.max(0, Math.min(slides.length - 1, targetIdx));
+        if (targetIdx === mobileTargetIndex) return;
+        mobileTargetIndex = targetIdx;
+        if (mobileNavTween) mobileNavTween.kill();
+        mobileNavTween = gsap.to(masterTL, {
+          time: slideRestTimes[targetIdx],
+          duration: 0.85,
+          ease: 'power2.inOut',
+          overwrite: true,
+          onUpdate: () => applyActiveFromTime(masterTL.time()),
+          onComplete: () => {
+            applyActiveFromTime(masterTL.time());
+            mobileNavTween = null;
+          }
+        });
+      }
 
       // Navegação programática suave até o platô de um slide
       function scrollToSlide(targetIdx) {
+        if (isMobile) {
+          goToSlideMobile(targetIdx);
+          return;
+        }
         targetIdx = Math.max(0, Math.min(slides.length - 1, targetIdx));
         const totalDur = masterTL.duration();
         const targetProgress = totalDur > 0 ? slideRestTimes[targetIdx] / totalDur : 0;
@@ -638,18 +695,21 @@ $(document).ready(function () {
         }
       }
 
+      // Índice de referência para próximo/anterior (mobile usa o alvo da animação em curso)
+      const getBaseIndex = () => (isMobile ? mobileTargetIndex : currentActiveIndex);
+
       // Controles por Botões Anterior e Próximo
       if (nextBtn) {
         nextBtn.addEventListener('click', (e) => {
           e.preventDefault();
-          scrollToSlide(currentActiveIndex + 1);
+          scrollToSlide(getBaseIndex() + 1);
         });
       }
 
       if (prevBtn) {
         prevBtn.addEventListener('click', (e) => {
           e.preventDefault();
-          scrollToSlide(currentActiveIndex - 1);
+          scrollToSlide(getBaseIndex() - 1);
         });
       }
 
@@ -661,21 +721,24 @@ $(document).ready(function () {
         });
       });
 
-      // Suporte a arrasto horizontal de cursor (pointer drag) sem interferir no scroll vertical
+      // Suporte a arrasto horizontal (mouse/touch) sem interferir no scroll vertical
       if (typeof Observer !== 'undefined' || (typeof ScrollTrigger !== 'undefined' && ScrollTrigger.observe)) {
         const obs = typeof Observer !== 'undefined' ? Observer : ScrollTrigger;
+        let lastSwipeAt = 0;
+        const swipeGuard = (fn) => () => {
+          const now = Date.now();
+          if (now - lastSwipeAt < 450) return;
+          lastSwipeAt = now;
+          fn();
+        };
         obs.create({
           target: section,
           ignore: '.swipe-slider-nav-wrap, .swipe-bottom-controls',
-          type: 'pointer',
-          tolerance: 45,
+          type: isMobile ? 'touch,pointer' : 'pointer',
+          tolerance: isMobile ? 40 : 45,
           preventDefault: false,
-          onLeft: () => {
-            scrollToSlide(currentActiveIndex + 1);
-          },
-          onRight: () => {
-            scrollToSlide(currentActiveIndex - 1);
-          }
+          onLeft: swipeGuard(() => scrollToSlide(getBaseIndex() + 1)),
+          onRight: swipeGuard(() => scrollToSlide(getBaseIndex() - 1))
         });
       }
 
@@ -687,15 +750,16 @@ $(document).ready(function () {
 
         if (e.key === 'ArrowDown' || e.key === 'ArrowRight') {
           e.preventDefault();
-          scrollToSlide(currentActiveIndex + 1);
+          scrollToSlide(getBaseIndex() + 1);
         } else if (e.key === 'ArrowUp' || e.key === 'ArrowLeft') {
           e.preventDefault();
-          scrollToSlide(currentActiveIndex - 1);
+          scrollToSlide(getBaseIndex() - 1);
         }
       });
 
-      // Recálculo ordenado do ScrollTrigger após carregamento de imagens
+      // Recálculo ordenado do ScrollTrigger após carregamento de imagens (apenas desktop: mobile não usa pin)
       function refreshSwipeSlider() {
+        if (isMobile) return;
         ScrollTrigger.sort();
         ScrollTrigger.refresh();
       }
@@ -847,7 +911,7 @@ $(document).ready(function () {
     });
   }
 
-  // 9. DOT MATRIX WARP BACKGROUND (CANVAS INTERATIVO)
+  // 9. DOT MATRIX WARP BACKGROUND (CANVAS INTERATIVO NO DESKTOP / ESTÁTICO E LEVE NO MOBILE)
   (function initDotMatrix() {
     const canvas = document.getElementById('matrix-canvas');
     if (!canvas) return;
@@ -855,6 +919,7 @@ $(document).ready(function () {
 
     let width, height;
     let dots = [];
+    let animId = null;
 
     // --- CONFIGURAÇÕES DA MATRIZ ---
     const SPACING = 24;          // Espaçamento entre cada ponto (em px)
@@ -866,18 +931,7 @@ $(document).ready(function () {
       y: -1000
     };
 
-    function resize() {
-      // Ajusta para suportar telas de alta densidade (Retina/DPR) com nitidez
-      const dpr = window.devicePixelRatio || 1;
-      width = window.innerWidth;
-      height = window.innerHeight;
-
-      canvas.width = width * dpr;
-      canvas.height = height * dpr;
-      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-
-      initDots();
-    }
+    const isMobileMode = () => window.matchMedia('(max-width: 768px)').matches;
 
     function initDots() {
       dots = [];
@@ -888,8 +942,47 @@ $(document).ready(function () {
       }
     }
 
-    // Rastreamento do mouse
+    // Desenha o pontilhado estático uma única vez no mobile (0% CPU/GPU contínua)
+    function drawStaticDots() {
+      ctx.clearRect(0, 0, width, height);
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.1)';
+      ctx.beginPath();
+      for (let i = 0; i < dots.length; i++) {
+        const dot = dots[i];
+        ctx.moveTo(dot.x + DOT_RADIUS, dot.y);
+        ctx.arc(dot.x, dot.y, DOT_RADIUS, 0, Math.PI * 2);
+      }
+      ctx.fill();
+    }
+
+    function resize() {
+      const mobile = isMobileMode();
+      const dpr = mobile ? 1 : (window.devicePixelRatio || 1);
+      width = window.innerWidth;
+      height = window.innerHeight;
+
+      canvas.width = width * dpr;
+      canvas.height = height * dpr;
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+      initDots();
+
+      if (mobile) {
+        if (animId) {
+          cancelAnimationFrame(animId);
+          animId = null;
+        }
+        drawStaticDots();
+      } else {
+        if (!animId) {
+          animId = requestAnimationFrame(animate);
+        }
+      }
+    }
+
+    // Rastreamento do mouse (desabilitado no mobile para economizar processamento)
     window.addEventListener('mousemove', (e) => {
+      if (isMobileMode()) return;
       mouse.x = e.clientX;
       mouse.y = e.clientY;
     });
@@ -899,8 +992,14 @@ $(document).ready(function () {
       mouse.y = -1000;
     });
 
-    // Loop de renderização contínuo
+    // Loop de renderização contínuo (ativo exclusivamente no desktop)
     function animate() {
+      if (isMobileMode()) {
+        drawStaticDots();
+        animId = null;
+        return;
+      }
+
       ctx.clearRect(0, 0, width, height);
 
       for (let i = 0; i < dots.length; i++) {
@@ -939,12 +1038,13 @@ $(document).ready(function () {
         ctx.fill();
       }
 
-      requestAnimationFrame(animate);
+      animId = requestAnimationFrame(animate);
     }
 
     window.addEventListener('resize', resize);
+    window.addEventListener('orientationchange', () => setTimeout(resize, 100));
+
     resize();
-    animate();
   })();
 
   // 10. CIRCUITO INTELIGENTE - EMISSÃO DE FÓTONS DE LUZ DO CHIP PARA OS CARDS
@@ -987,30 +1087,37 @@ $(document).ready(function () {
     ];
 
     let pathLengths = [0, 0, 0, 0, 0, 0];
+    let pathPoints = [[], [], [], [], [], []];
+    const POINT_STEP = 2; // px entre amostras pré-calculadas (evita getPointAtLength por frame)
     let dpr = 1;
     let width = 0;
     let height = 0;
 
-    // Fótons: 2 fótons por caminho (desfasados em 0.5) = 12 fótons no total
+    // MOBILE: versão leve (sem halos radiais/blend aditivo, 1 fóton por trilha, 30fps, DPR 1)
+    const isLiteMode = window.matchMedia('(max-width: 768px)').matches;
+
+    // Fótons: 2 fótons por caminho no desktop (desfasados em 0.5); 1 por caminho no mobile
     const photons = [];
     for (let pathIdx = 0; pathIdx < 6; pathIdx++) {
       photons.push({
         pathIdx: pathIdx,
-        progress: 0.0,
+        progress: isLiteMode ? pathIdx * 0.13 : 0.0,
         speed: 0.007,
         size: 3.2,
       });
-      photons.push({
-        pathIdx: pathIdx,
-        progress: 0.5,
-        speed: 0.007,
-        size: 3.2,
-      });
+      if (!isLiteMode) {
+        photons.push({
+          pathIdx: pathIdx,
+          progress: 0.5,
+          speed: 0.007,
+          size: 3.2,
+        });
+      }
     }
 
     function updateGeometry() {
       const bRect = board.getBoundingClientRect();
-      dpr = window.devicePixelRatio || 1;
+      dpr = isLiteMode ? 1 : (window.devicePixelRatio || 1);
       width = bRect.width;
       height = bRect.height;
 
@@ -1081,6 +1188,14 @@ $(document).ready(function () {
       for (let i = 0; i < 6; i++) {
         lines[i].setAttribute('d', pathData[i]);
         pathLengths[i] = lines[i].getTotalLength() || 1;
+
+        // Pré-amostra a trilha uma única vez (a cada atualização de geometria)
+        const pts = [];
+        for (let dist = 0; dist <= pathLengths[i] + POINT_STEP; dist += POINT_STEP) {
+          const pt = lines[i].getPointAtLength(Math.min(dist, pathLengths[i]));
+          pts.push({ x: pt.x, y: pt.y });
+        }
+        pathPoints[i] = pts;
       }
 
       // Pinos de conexão (Triângulos direcionais nas saídas do chip)
@@ -1097,38 +1212,76 @@ $(document).ready(function () {
       }
     }
 
+    // Retorna o ponto pré-amostrado da trilha na distância informada (sem getPointAtLength por frame)
+    function pointAt(pathIdx, dist) {
+      const pts = pathPoints[pathIdx];
+      if (!pts.length) return null;
+      const idx = Math.max(0, Math.min(pts.length - 1, Math.floor(dist / POINT_STEP)));
+      return pts[idx];
+    }
+
+    // Efeito de impacto luminoso no card de destino (desabilitado no modo leve/mobile)
+    function pulseCard(pathIdx) {
+      if (isLiteMode) return;
+      const targetCard = cards[pathIdx];
+      targetCard.classList.add('is-receiving');
+      setTimeout(() => targetCard.classList.remove('is-receiving'), 280);
+    }
+
+    let rafId = null;
+    let running = false;
+    let lastTs = 0;
+
     // Loop de Animação de Fótons no Canvas
-    function animate() {
+    function animate(ts) {
+      if (!running) return;
+      rafId = requestAnimationFrame(animate);
+
+      // Mobile: limita a ~30fps e usa passo temporal proporcional
+      let step = 1;
+      if (isLiteMode) {
+        const elapsed = ts - lastTs;
+        if (elapsed < 32) return;
+        step = Math.min(3, elapsed / 16.667);
+        lastTs = ts;
+      }
+
       ctx.clearRect(0, 0, width, height);
 
       for (let i = 0; i < photons.length; i++) {
         const p = photons[i];
-        p.progress += p.speed;
+        p.progress += p.speed * step;
         if (p.progress >= 1) {
           p.progress = 0;
-          // Efeito de impacto luminoso no card de destino
-          const targetCard = cards[p.pathIdx];
-          targetCard.classList.add('is-receiving');
-          setTimeout(() => targetCard.classList.remove('is-receiving'), 280);
+          pulseCard(p.pathIdx);
         }
 
-        const pathElem = lines[p.pathIdx];
         const totalLen = pathLengths[p.pathIdx];
         if (!totalLen) continue;
 
         const currentDist = p.progress * totalLen;
-        const head = pathElem.getPointAtLength(currentDist);
+        const head = pointAt(p.pathIdx, currentDist);
+        if (!head) continue;
+
+        if (isLiteMode) {
+          // Versão leve: apenas o ponto de luz (sem rastro/cauda), halo plano + núcleo
+          ctx.fillStyle = 'rgba(232, 89, 12, 0.35)';
+          ctx.beginPath();
+          ctx.arc(head.x, head.y, 6, 0, Math.PI * 2);
+          ctx.fill();
+
+          ctx.fillStyle = 'rgba(255, 255, 255, 0.95)';
+          ctx.beginPath();
+          ctx.arc(head.x, head.y, 2.2, 0, Math.PI * 2);
+          ctx.fill();
+          continue;
+        }
 
         // Cauda do fóton suavizada (5 pontos interpolados na trilha)
-        const d1 = Math.max(0, currentDist - 12);
-        const d2 = Math.max(0, currentDist - 25);
-        const d3 = Math.max(0, currentDist - 40);
-        const d4 = Math.max(0, currentDist - 58);
-
-        const t1 = pathElem.getPointAtLength(d1);
-        const t2 = pathElem.getPointAtLength(d2);
-        const t3 = pathElem.getPointAtLength(d3);
-        const t4 = pathElem.getPointAtLength(d4);
+        const t1 = pointAt(p.pathIdx, Math.max(0, currentDist - 12));
+        const t2 = pointAt(p.pathIdx, Math.max(0, currentDist - 25));
+        const t3 = pointAt(p.pathIdx, Math.max(0, currentDist - 40));
+        const t4 = pointAt(p.pathIdx, Math.max(0, currentDist - 58));
 
         // Blending aditivo (luz óptica difusa suave)
         ctx.save();
@@ -1175,16 +1328,50 @@ $(document).ready(function () {
 
         ctx.restore();
       }
+    }
 
-      requestAnimationFrame(animate);
+    function startLoop() {
+      if (running) return;
+      running = true;
+      lastTs = performance.now();
+      rafId = requestAnimationFrame(animate);
+    }
+
+    function stopLoop() {
+      running = false;
+      if (rafId) cancelAnimationFrame(rafId);
+      rafId = null;
     }
 
     // Inicialização e Reatividade
     updateGeometry();
-    window.addEventListener('resize', updateGeometry);
+
+    // Mobile: o resize dispara a cada recolhimento da barra de endereço; só recalcula se a LARGURA mudar
+    let lastWinW = window.innerWidth;
+    window.addEventListener('resize', () => {
+      if (isLiteMode && window.innerWidth === lastWinW) return;
+      lastWinW = window.innerWidth;
+      updateGeometry();
+    });
     window.addEventListener('orientationchange', () => setTimeout(updateGeometry, 150));
     window.addEventListener('load', updateGeometry);
-    animate();
+
+    // Só anima enquanto o circuito está visível na tela e a aba está ativa (economiza CPU/GPU/bateria)
+    let boardVisible = true;
+    if ('IntersectionObserver' in window) {
+      boardVisible = false;
+      const io = new IntersectionObserver((entries) => {
+        boardVisible = entries[0].isIntersecting;
+        if (boardVisible && !document.hidden) startLoop(); else stopLoop();
+      }, { rootMargin: '80px 0px' });
+      io.observe(board);
+    } else {
+      startLoop();
+    }
+    document.addEventListener('visibilitychange', () => {
+      if (document.hidden) stopLoop();
+      else if (boardVisible) startLoop();
+    });
 
     // Exporta função para atualização dinâmica de geometria dos circuitos
     window.__updateCircuitGeometry = updateGeometry;
@@ -1509,6 +1696,44 @@ $(document).ready(function () {
     // Evita arrasto nativo fantasma de imagens
     strip.querySelectorAll("img").forEach((img) => img.setAttribute("draggable", "false"));
 
+    // MOBILE: sem scroll effect (sem pin/scrub). A fita rola apenas arrastando para os lados
+    // (scroll horizontal nativo com snap) ou pelas setas.
+    if (window.matchMedia("(max-width: 768px)").matches) {
+      const scroller = gallerySection.querySelector(".horiz-gallery-wrapper");
+      if (!scroller) return;
+
+      const getMaxScroll = () => Math.max(1, scroller.scrollWidth - scroller.clientWidth);
+      const getStep = () => {
+        const firstCard = strip.querySelector(".horiz-card");
+        return firstCard ? firstCard.offsetWidth + 19 : 280;
+      };
+
+      let ticking = false;
+      scroller.addEventListener("scroll", () => {
+        if (ticking) return;
+        ticking = true;
+        requestAnimationFrame(() => {
+          if (progressBar) {
+            const ratio = Math.max(0.18, Math.min(1, scroller.scrollLeft / getMaxScroll()));
+            progressBar.style.transform = "scaleX(" + ratio + ")";
+          }
+          ticking = false;
+        });
+      }, { passive: true });
+
+      if (prevBtn) {
+        prevBtn.addEventListener("click", () => {
+          scroller.scrollBy({ left: -getStep(), behavior: "smooth" });
+        });
+      }
+      if (nextBtn) {
+        nextBtn.addEventListener("click", () => {
+          scroller.scrollBy({ left: getStep(), behavior: "smooth" });
+        });
+      }
+      return;
+    }
+
     // Distância exata da rolagem horizontal da fita
     const getScrollDistance = () => {
       return Math.max(0, strip.scrollWidth - window.innerWidth + 80);
@@ -1698,17 +1923,25 @@ $(document).ready(function () {
   })();
 
   // =========================================================================
-  // 15. SEÇÃO B2B (SOLUÇÕES CORPORATE) - ATIVAÇÃO DE LIGHTING BORDER AO POUSAR NA TELA
+  // 15. SEÇÃO B2B (SOLUÇÕES CORPORATE) - ATIVAÇÃO DE LIGHTING BORDER AO POUSAR NA TELA (APENAS MOBILE)
   // No mobile, ativa as animações de hover nos cards .b2b-col.lighting-move-border-hover
   // quando a seção específica dele pousa no viewport.
+  // No desktop, a iluminação e rotação de borda permanecem ativadas estritamente com :hover do mouse.
   // =========================================================================
   (function initB2BInView() {
     const b2bSection = document.querySelector("#corporate") || document.querySelector(".section-b2b");
     if (!b2bSection) return;
 
     const b2bCards = b2bSection.querySelectorAll(".b2b-col");
+    const isMobile = () => window.matchMedia("(max-width: 768px)").matches;
 
     function setB2BActive(active) {
+      // No desktop nunca ativa classes inview/active (permanece estritamente no hover com mouse)
+      if (!isMobile()) {
+        b2bSection.classList.remove("is-inview");
+        b2bCards.forEach((c) => c.classList.remove("is-inview", "is-active"));
+        return;
+      }
       if (active) {
         b2bSection.classList.add("is-inview");
         b2bCards.forEach((c) => c.classList.add("is-inview", "is-active"));
@@ -1723,9 +1956,13 @@ $(document).ready(function () {
         trigger: b2bSection,
         start: "top 85%",
         end: "bottom 15%",
-        onEnter: () => setB2BActive(true),
+        onEnter: () => {
+          if (isMobile()) setB2BActive(true);
+        },
         onLeave: () => setB2BActive(false),
-        onEnterBack: () => setB2BActive(true),
+        onEnterBack: () => {
+          if (isMobile()) setB2BActive(true);
+        },
         onLeaveBack: () => setB2BActive(false),
       });
 
@@ -1735,15 +1972,19 @@ $(document).ready(function () {
           trigger: card,
           start: "top 92%",
           end: "bottom 8%",
-          onEnter: () => card.classList.add("is-inview", "is-active"),
+          onEnter: () => {
+            if (isMobile()) card.classList.add("is-inview", "is-active");
+          },
           onLeave: () => {
-            if (!b2bSection.classList.contains("is-inview")) {
+            if (!b2bSection.classList.contains("is-inview") || !isMobile()) {
               card.classList.remove("is-inview", "is-active");
             }
           },
-          onEnterBack: () => card.classList.add("is-inview", "is-active"),
+          onEnterBack: () => {
+            if (isMobile()) card.classList.add("is-inview", "is-active");
+          },
           onLeaveBack: () => {
-            if (!b2bSection.classList.contains("is-inview")) {
+            if (!b2bSection.classList.contains("is-inview") || !isMobile()) {
               card.classList.remove("is-inview", "is-active");
             }
           },
@@ -1753,6 +1994,10 @@ $(document).ready(function () {
       const observer = new IntersectionObserver(
         (entries) => {
           entries.forEach((entry) => {
+            if (!isMobile()) {
+              setB2BActive(false);
+              return;
+            }
             if (entry.target === b2bSection) {
               setB2BActive(entry.isIntersecting);
             } else if (entry.isIntersecting) {
@@ -1768,6 +2013,21 @@ $(document).ready(function () {
       observer.observe(b2bSection);
       b2bCards.forEach((c) => observer.observe(c));
     }
+  })();
+
+  // Ao cruzar o breakpoint mobile/desktop (ex.: rotação ou redimensionar janela),
+  // recarrega para reinicializar as seções com o modo correto (scroll effect x arrastar).
+  (function watchMobileBreakpoint() {
+    const mq = window.matchMedia("(max-width: 768px)");
+    let wasMobile = mq.matches;
+    let timer = null;
+    const onChange = () => {
+      if (mq.matches === wasMobile) return;
+      clearTimeout(timer);
+      timer = setTimeout(() => window.location.reload(), 250);
+    };
+    if (mq.addEventListener) mq.addEventListener("change", onChange);
+    else if (mq.addListener) mq.addListener(onChange);
   })();
 });
 
