@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 120" width="100%" height="100%">
+  <defs>
+    <style>
+      .logo-brand {
+        font-family: 'Syne', 'Montserrat', sans-serif;
+        font-weight: 700;
+        font-size: 58px;
+        letter-spacing: 0.28em;
+      }
+      .logo-sub {
+        font-family: 'Raleway', sans-serif;
+        font-weight: 600;
+        font-size: 15px;
+        letter-spacing: 0.65em;
+      }
+    </style>
+  </defs>
+
+  <!-- Centered VYVA with signature Orange Y -->
+  <g text-anchor="middle">
+    <text x="200" y="65" class="logo-brand">
+      <tspan fill="#ffffff">V</tspan>
+      <tspan fill="#ea580c">Y</tspan>
+      <tspan fill="#ffffff">VA</tspan>
+    </text>
+    <text x="204" y="98" class="logo-sub" fill="#ffffff" opacity="0.95">HOMES</text>
+  </g>
+</svg>

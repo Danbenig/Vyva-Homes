@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 3840 280" preserveAspectRatio="none" width="100%" height="100%">
+  <defs>
+    <filter id="subDriftBlur" x="-10%" y="-30%" width="120%" height="160%">
+      <feGaussianBlur in="SourceGraphic" stdDeviation="14" />
+    </filter>
+  </defs>
+
+  <!-- Seamless repeating sub-cloud puff wave 1 (0 to 1920) -->
+  <g filter="url(#subDriftBlur)" fill="#ffffff" opacity="0.65">
+    <!-- Puffs Part 1 -->
+    <ellipse cx="200" cy="140" rx="200" ry="90" />
+    <ellipse cx="500" cy="110" rx="240" ry="110" />
+    <ellipse cx="850" cy="130" rx="220" ry="100" />
+    <ellipse cx="1200" cy="100" rx="250" ry="115" />
+    <ellipse cx="1550" cy="130" rx="230" ry="105" />
+    <ellipse cx="1850" cy="115" rx="200" ry="95" />
+
+    <!-- Identical Puffs Part 2 (1920 to 3840 for seamless loop) -->
+    <ellipse cx="2120" cy="140" rx="200" ry="90" />
+    <ellipse cx="2420" cy="110" rx="240" ry="110" />
+    <ellipse cx="2770" cy="130" rx="220" ry="100" />
+    <ellipse cx="3120" cy="100" rx="250" ry="115" />
+    <ellipse cx="3470" cy="130" rx="230" ry="105" />
+    <ellipse cx="3770" cy="115" rx="200" ry="95" />
+  </g>
+
+  <!-- Wavy organic sub-silhouette -->
+  <path d="M 0 280 L 0 160 
+           Q 240 100 480 140 T 960 110 T 1440 150 T 1920 120 
+           T 2400 140 T 2880 110 T 3360 150 T 3840 120 
+           L 3840 280 Z" 
+        fill="#ffffff" opacity="0.45" filter="url(#subDriftBlur)"/>
+</svg>

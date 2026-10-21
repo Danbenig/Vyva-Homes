@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 3840 260" preserveAspectRatio="none" width="100%" height="100%">
+  <defs>
+    <filter id="subCloudSoftBlur" x="-10%" y="-30%" width="120%" height="160%">
+      <feGaussianBlur stdDeviation="14" />
+    </filter>
+    <linearGradient id="subCloudGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#141822" stop-opacity="0.95"/>
+      <stop offset="70%" stop-color="#1b202d" stop-opacity="0.6"/>
+      <stop offset="100%" stop-color="#1b202d" stop-opacity="0"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Cycle 1 (0 to 1920) -->
+  <path d="M 0 0 L 0 80 Q 160 160 320 100 T 640 120 T 960 70 T 1280 130 T 1600 90 T 1920 80 L 1920 0 Z" fill="url(#subCloudGrad)" filter="url(#subCloudSoftBlur)"/>
+  
+  <!-- Cycle 2 (1920 to 3840 - Identical copy for seamless horizontal scroll) -->
+  <path d="M 1920 0 L 1920 80 Q 2080 160 2240 100 T 2560 120 T 2880 70 T 3200 130 T 3520 90 T 3840 80 L 3840 0 Z" fill="url(#subCloudGrad)" filter="url(#subCloudSoftBlur)"/>
+
+  <!-- Additional delicate billow wisps for organic drift -->
+  <path d="M 0 0 L 0 50 C 220 95 440 25 700 70 C 960 115 1200 45 1460 80 C 1700 105 1820 60 1920 70 C 2140 95 2360 25 2620 70 C 2880 115 3120 45 3380 80 C 3620 105 3740 60 3840 70 L 3840 0 Z" fill="#1e2332" opacity="0.4" filter="url(#subCloudSoftBlur)"/>
+</svg>

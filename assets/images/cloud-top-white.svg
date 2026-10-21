@@ -1,0 +1,44 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1920 360" preserveAspectRatio="none" width="100%" height="100%">
+  <defs>
+    <filter id="whiteCloudSoft" x="-10%" y="-30%" width="120%" height="160%">
+      <feGaussianBlur in="SourceGraphic" stdDeviation="16" />
+    </filter>
+    <filter id="whiteCloudCrisp" x="-10%" y="-30%" width="120%" height="160%">
+      <feGaussianBlur in="SourceGraphic" stdDeviation="6" />
+    </filter>
+    <radialGradient id="cloudPuff" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#ffffff" stop-opacity="1"/>
+      <stop offset="70%" stop-color="#ffffff" stop-opacity="0.95"/>
+      <stop offset="100%" stop-color="#ffffff" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="cloudBaseGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#ffffff" stop-opacity="0"/>
+      <stop offset="50%" stop-color="#ffffff" stop-opacity="0.85"/>
+      <stop offset="100%" stop-color="#ffffff" stop-opacity="1"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Deep volumetric blurred puff clusters -->
+  <g filter="url(#whiteCloudSoft)" fill="#ffffff">
+    <ellipse cx="160" cy="220" rx="220" ry="110" opacity="0.9" />
+    <ellipse cx="420" cy="180" rx="260" ry="130" opacity="0.95" />
+    <ellipse cx="720" cy="210" rx="240" ry="120" opacity="0.92" />
+    <ellipse cx="980" cy="160" rx="280" ry="140" opacity="0.98" />
+    <ellipse cx="1260" cy="190" rx="260" ry="130" opacity="0.94" />
+    <ellipse cx="1540" cy="170" rx="270" ry="135" opacity="0.96" />
+    <ellipse cx="1800" cy="210" rx="230" ry="115" opacity="0.92" />
+  </g>
+
+  <!-- Organic sculpted cloud billow path -->
+  <path d="M 0 360 L 0 200 
+           C 120 140 220 220 360 170 
+           C 480 120 620 180 760 150 
+           C 900 110 1060 160 1200 130 
+           C 1340 100 1480 170 1620 140 
+           C 1740 110 1840 180 1920 160 
+           L 1920 360 Z" 
+        fill="#ffffff" opacity="0.97" filter="url(#whiteCloudCrisp)"/>
+
+  <!-- Solid white base filling the bottom into Section 2 -->
+  <rect y="240" width="1920" height="120" fill="#ffffff"/>
+</svg>

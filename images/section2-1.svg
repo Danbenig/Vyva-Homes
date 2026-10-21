@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1920 1080" width="100%" height="100%">
+  <defs>
+    <linearGradient id="sec2Grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#111318"/>
+      <stop offset="60%" stop-color="#191c24"/>
+      <stop offset="100%" stop-color="#0f1115"/>
+    </linearGradient>
+    <radialGradient id="cloudGlow" cx="50%" cy="50%" r="60%">
+      <stop offset="0%" stop-color="#ffffff" stop-opacity="0.08"/>
+      <stop offset="100%" stop-color="#ffffff" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <rect width="1920" height="1080" fill="url(#sec2Grad)"/>
+  <rect width="1920" height="1080" fill="url(#cloudGlow)"/>
+  
+  <rect x="200" y="150" width="1520" height="780" rx="32" fill="none" stroke="rgba(255, 255, 255, 0.05)" stroke-width="1.5" stroke-dasharray="8 8"/>
+  
+  <text x="960" y="520" text-anchor="middle" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="22" font-weight="500" letter-spacing="6" fill="#ffffff" opacity="0.85">EXPERIENCE ECOSYSTEM</text>
+  <text x="960" y="560" text-anchor="middle" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="13" letter-spacing="3" fill="#888e9f" opacity="0.7">SECTION 2 MEDIA PLACEHOLDER • 01</text>
+</svg>

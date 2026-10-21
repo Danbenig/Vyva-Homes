@@ -1,0 +1,1559 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>VYVA HOMES — The stay is just the beginning</title>
+  <meta name="description" content="Ecossistema vivo de hospitalidade, conveniência e conexão com o destino. Operação consolidada nos EUA e expansão no Brasil.">
+
+  <!-- Favicon -->
+  <link rel="shortcut icon" href="images/favicon.ico" type="image/x-icon">
+  <link rel="apple-touch-icon" href="images/webclip.png">
+
+  <!-- Declaração das fontes locais via @font-face (Syne + Raleway) -->
+  <link rel="stylesheet" href="css/fonts.css">
+  
+  <!-- Lenis Smooth Scroll CSS (v1.1.18) -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lenis@1.1.18/dist/lenis.css">
+
+  <!-- Estilos Globais e Layout da Aplicação -->
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="body">
+
+  <!-- =========================================================================
+       PRELOADER ELEGANTE (BEM-VINDO À VYVA)
+       ========================================================================= -->
+  <div class="preloader" id="preloader" aria-hidden="true">
+    <img src="images/vyva-logo.svg" alt="VYVA" class="preloader__logo">
+    <div class="preloader__bar"></div>
+  </div>
+
+  <!-- =========================================================================
+       CANVAS DOT MATRIX WARP (BACKGROUND INTERATIVO EM TODAS AS SEÇÕES)
+       ========================================================================= -->
+  <canvas id="matrix-canvas"></canvas>
+
+  <!-- =========================================================================
+       HEADER / NAVBAR PERSISTENTE
+       Menu: Home / Destinos / Experiência / Soluções / Para Empresas / Sobre / Reservar
+       ========================================================================= -->
+  <header class="navbar" id="mainNavbar">
+    <div class="container navbar__wrapper">
+      <!-- Brand Logo -->
+      <a href="index.html" class="navbar__brand" aria-label="VYVA HOMES">
+        <img src="images/vyva-logo.svg" alt="VYVA HOMES" class="navbar__brand-logo">
+      </a>
+
+      <!-- Menu Principal -->
+      <nav aria-label="Navegação Principal">
+        <ul class="navbar__menu" id="navMenu">
+          <li class="navbar__item">
+            <a href="#hero" class="navbar__link is-active">Home</a>
+          </li>
+          <li class="navbar__item">
+            <a href="#destinos" class="navbar__link">Destinos</a>
+          </li>
+          <li class="navbar__item">
+            <a href="#experiencia" class="navbar__link">Experiência</a>
+          </li>
+          <li class="navbar__item">
+            <a href="#solucoes" class="navbar__link">Soluções</a>
+            <div class="navbar__dropdown">
+              <a href="#vyva-decor" class="navbar__dropdown-link">VYVA Decor</a>
+              <a href="#by-vyva" class="navbar__dropdown-link">BY VYVA</a>
+              <a href="#vyva-connect" class="navbar__dropdown-link">VYVA Connect</a>
+              <a href="#costa-cacau" class="navbar__dropdown-link">Costa do Cacau</a>
+            </div>
+          </li>
+          <li class="navbar__item">
+            <a href="#corporate" class="navbar__link">Para Empresas</a>
+          </li>
+          <li class="navbar__item">
+            <a href="#sobre" class="navbar__link">Sobre</a>
+          </li>
+        </ul>
+      </nav>
+
+      <!-- Ações: Botão Reservar com Rolling Text -->
+      <div class="navbar__actions">
+        <a href="#reservas" class="btn-roll btn-roll--primary button-lighting">
+          <span class="btn-roll__inner">
+            <span class="btn-roll__text">Reservar</span>
+            <span class="btn-roll__text btn-roll__text--clone" aria-hidden="true">Reservar</span>
+          </span>
+        </a>
+
+        <!-- Botão Mobile -->
+        <button class="navbar__toggle" id="navToggle" aria-label="Abrir Menu">
+          <span></span>
+          <span></span>
+          <span></span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main id="app">
+
+    <!-- =======================================================================
+         01. HERO SECTION COM BACKGROUND VIDEO LOOP FULLSCREEN
+         - Vídeo local: images/background-hero.mp4
+         - Overlay profissional para cobrir slogan e logomarca nativos do vídeo
+         - Texto sobreposto: VYVA HOMES + Typewriter animado
+         - CTAs: RESERVAR UMA ESTADIA / CONHECER A VYVA
+         ======================================================================= -->
+    <section class="hero" id="hero">
+      <div class="hero__video-wrap">
+        <video id="heroVideo" class="hero__video" autoplay muted loop playsinline poster="images/hero-1.svg">
+          <source src="images/background-hero.mp4" type="video/mp4">
+          Seu navegador não suporta vídeos HTML5.
+        </video>
+      </div>
+
+      <div class="container hero__content">
+        <div class="hero__typewriter">
+          <span id="typewriter-text"></span>
+        </div>
+      </div>
+
+      <!-- Motor de Reservas integrado na Hero (a 65px da base da Hero) -->
+      <div class="container hero__booking-wrap" id="reservas">
+        <form class="booking-bar" id="bookingForm">
+          <div class="booking-item">
+            <label for="bookingDest" class="booking-item__label">Destino</label>
+            <select id="bookingDest" class="booking-item__select" required>
+              <option value="sao-paulo">São Paulo (SP)</option>
+              <option value="costa-do-cacau">Costa do Cacau (BA)</option>
+              <option value="dallas">Dallas (Texas - EUA)</option>
+            </select>
+          </div>
+
+          <div class="booking-item">
+            <label for="bookingCheckin" class="booking-item__label">Check-in</label>
+            <input type="date" id="bookingCheckin" class="booking-item__input" placeholder="dd/ mm/ aaaa" required>
+          </div>
+
+          <div class="booking-item">
+            <label for="bookingCheckout" class="booking-item__label">Check-out</label>
+            <input type="date" id="bookingCheckout" class="booking-item__input" placeholder="dd/ mm/ aaaa" required>
+          </div>
+
+          <div class="booking-item">
+            <label for="bookingGuests" class="booking-item__label">Hóspedes</label>
+            <select id="bookingGuests" class="booking-item__select">
+              <option value="1">1 Hóspede</option>
+              <option value="2" selected>2 Hóspedes</option>
+              <option value="3">3 Hóspedes</option>
+              <option value="4+">4+ Hóspedes</option>
+            </select>
+          </div>
+
+          <button type="submit" class="btn-roll btn-roll--primary button-lighting">
+            <span class="btn-roll__inner">
+              <span class="btn-roll__text">Buscar Vagas</span>
+              <span class="btn-roll__text btn-roll__text--clone" aria-hidden="true">Buscar Vagas</span>
+            </span>
+          </button>
+        </form>
+      </div>
+    </section>
+
+    <!-- =======================================================================
+         TICKER MARQUEE (CIDADES E DESTINOS DA MARCA)
+         ======================================================================= -->
+    <section class="ticker-section" aria-hidden="true">
+      <div class="ticker-track">
+        <div class="ticker-item">São Paulo <span class="dot"></span></div>
+        <div class="ticker-item">Dallas <span class="dot"></span></div>
+        <div class="ticker-item">Costa do Cacau <span class="dot"></span></div>
+        <div class="ticker-item">Austin <span class="dot"></span></div>
+        <div class="ticker-item">Houston <span class="dot"></span></div>
+        <div class="ticker-item">Ilhéus <span class="dot"></span></div>
+        <div class="ticker-item">Frisco <span class="dot"></span></div>
+        <div class="ticker-item">São Paulo <span class="dot"></span></div>
+        <div class="ticker-item">Dallas <span class="dot"></span></div>
+        <div class="ticker-item">Costa do Cacau <span class="dot"></span></div>
+        <div class="ticker-item">Austin <span class="dot"></span></div>
+        <div class="ticker-item">Houston <span class="dot"></span></div>
+        <div class="ticker-item">Ilhéus <span class="dot"></span></div>
+        <div class="ticker-item">Frisco <span class="dot"></span></div>
+      </div>
+    </section>
+
+    <!-- =======================================================================
+         02.3 SEÇÃO DE ESTATÍSTICAS / STATISTICS (ODOMETER EFFECT)
+         Desde 2019 (Dallas - Texas) | Cidades 22+ (EUA - Brasil) | Mais de 21 mil (Atendimentos)
+         ======================================================================= -->
+    <section class="section-stats" id="estatisticas">
+      <div class="container">
+        <div class="stats-grid">
+
+          <!-- Coluna 1: Desde 2019 (Dallas - Texas) -->
+          <div class="stat-card">
+            <span class="stat-card__label">Desde</span>
+            <div class="stat-card__divider"></div>
+            <div class="stat-card__value">
+              <span class="odometer" data-value="2019">2019</span>
+            </div>
+            <span class="stat-card__subtitle">Dallas - Texas</span>
+          </div>
+
+          <!-- Coluna 2: Cidades 22+ (EUA - Brasil) -->
+          <div class="stat-card">
+            <span class="stat-card__label">Cidades</span>
+            <div class="stat-card__divider"></div>
+            <div class="stat-card__value">
+              <span class="odometer" data-value="22">22</span><span class="stat-card__symbol">+</span>
+            </div>
+            <span class="stat-card__subtitle">EUA - Brasil</span>
+          </div>
+
+          <!-- Coluna 3: Mais de 21 mil (Atendimentos) -->
+          <div class="stat-card">
+            <span class="stat-card__label">Mais de</span>
+            <div class="stat-card__divider"></div>
+            <div class="stat-card__value">
+              <span class="odometer" data-value="21">21</span><span class="stat-card__symbol stat-card__symbol--text">&nbsp;mil</span>
+            </div>
+            <span class="stat-card__subtitle">Atendimentos</span>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- =======================================================================
+         02.5 CIRCUITO INTELIGENTE VYVA DECOR - O CHIP DO SISTEMA
+         6 Conexões: Operação & Performance, Mobiliário & Marcenaria, Eletros & Tecnologia,
+         Enxoval & Amenities, Implantação & Montagem, Padronização & Realizes
+         ======================================================================= -->
+    <section class="section-circuit" id="implantacao">
+      <div class="container">
+        <header class="section-header">
+          <span class="section-header__tag">Nosso Ecossistema</span>
+          <h2 class="section-header__title">Soluções Completas de Hospitalidade</h2>
+          <p class="section-header__desc">Da inteligência na concepção e implantação ao cuidado operacional contínuo com hóspedes e investidores.</p>
+        </header>
+
+        <!-- Barra de Sequência de Abas do Ecossistema -->
+        <div class="ecosystem-tabs-wrap">
+          <div class="ecosystem-tabs" role="tablist" aria-label="Soluções do Ecossistema">
+            <button class="ecosystem-tab is-active" role="tab" aria-selected="true" data-tab="vyva-decor">
+              <span class="ecosystem-tab__label">VYVA DECOR</span>
+              <span class="ecosystem-tab__line"></span>
+            </button>
+            <button class="ecosystem-tab" role="tab" aria-selected="false" data-tab="by-vyva">
+              <span class="ecosystem-tab__label">BY VYVA</span>
+              <span class="ecosystem-tab__line"></span>
+            </button>
+            <button class="ecosystem-tab" role="tab" aria-selected="false" data-tab="vyva-connect">
+              <span class="ecosystem-tab__label">VYVA CONNECT</span>
+              <span class="ecosystem-tab__line"></span>
+            </button>
+            <button class="ecosystem-tab" role="tab" aria-selected="false" data-tab="vyva-resort">
+              <span class="ecosystem-tab__label">VYVA RESORT</span>
+              <span class="ecosystem-tab__line"></span>
+            </button>
+          </div>
+        </div>
+
+        <div class="circuit-wrapper">
+          <div class="circuit-board" id="circuitBoard">
+            <!-- Linhas de Circuito SVG com Conectores em Triângulo -->
+            <svg class="circuit-svg" id="circuitSvg" aria-hidden="true">
+              <path id="circuit-line-1" class="circuit-line" />
+              <path id="circuit-line-2" class="circuit-line" />
+              <path id="circuit-line-3" class="circuit-line" />
+              <path id="circuit-line-4" class="circuit-line" />
+              <path id="circuit-line-5" class="circuit-line" />
+              <path id="circuit-line-6" class="circuit-line" />
+              
+              <!-- Pinos de conexão (triângulos laranja nas saídas do chip) -->
+              <polygon id="circuit-pin-1" class="circuit-pin" />
+              <polygon id="circuit-pin-2" class="circuit-pin" />
+              <polygon id="circuit-pin-3" class="circuit-pin" />
+              <polygon id="circuit-pin-4" class="circuit-pin" />
+              <polygon id="circuit-pin-5" class="circuit-pin" />
+              <polygon id="circuit-pin-6" class="circuit-pin" />
+            </svg>
+
+            <!-- Canvas de Alta Performance para Fótons de Luz -->
+            <canvas class="circuit-canvas" id="circuitCanvas"></canvas>
+
+            <!-- 1. Top Left: Operação & Performance -->
+            <div class="circuit-card circuit-card--top-left" id="circuit-card-1">
+              <div class="circuit-card__content">
+                <span class="circuit-card__title">Operação & Performance</span>
+              </div>
+            </div>
+
+            <!-- 2. Top Center: Mobiliário & Marcenaria -->
+            <div class="circuit-card circuit-card--top-center" id="circuit-card-2">
+              <div class="circuit-card__content">
+                <span class="circuit-card__title">Mobiliário & Marcenaria</span>
+              </div>
+            </div>
+
+            <!-- 3. Top Right: Eletros & Tecnologia -->
+            <div class="circuit-card circuit-card--top-right" id="circuit-card-3">
+              <div class="circuit-card__content">
+                <span class="circuit-card__title">Eletros & Tecnologia</span>
+              </div>
+            </div>
+
+            <!-- CHIP CENTRAL (O PROCESSADOR DO SISTEMA) -->
+            <div class="circuit-chip-slot">
+              <div class="circuit-chip" id="circuitChip" title="VYVA Ecossistema">
+                <div class="circuit-chip__pulse" aria-hidden="true"></div>
+                <div class="circuit-chip__core">
+                  <div class="circuit-chip__brand">
+                    <span class="circuit-chip__name">VYVA</span>
+                    <span class="circuit-chip__sub">ECOSSISTEMA</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- 4. Bottom Left: Enxoval & Amenities -->
+            <div class="circuit-card circuit-card--bottom-left" id="circuit-card-4">
+              <div class="circuit-card__content">
+                <span class="circuit-card__title">Enxoval & Amenities</span>
+              </div>
+            </div>
+
+            <!-- 5. Bottom Center: Implantação & Montagem -->
+            <div class="circuit-card circuit-card--bottom-center" id="circuit-card-5">
+              <div class="circuit-card__content">
+                <span class="circuit-card__title">Implantação & Montagem</span>
+              </div>
+            </div>
+
+            <!-- 6. Bottom Right: Padronização & Realizes -->
+            <div class="circuit-card circuit-card--bottom-right" id="circuit-card-6">
+              <div class="circuit-card__content">
+                <span class="circuit-card__title">Padronização & Realizes</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- =======================================================================
+         04. GSAP SWIPE SLIDER - PILARES DE EXPERIÊNCIA (#experiencia)
+         - 8 Fotos e Pilares de Lifestyle (STAY, WELL, TASTE, MOVE, EXPLORE, LIVE, CONNECT, CARE)
+         - Efeito Swipe Slider com Counter-Sliding Panels (.outer + .inner)
+         - Gestos de Swipe/Drag (Touch e Mouse), Teclado, Botões de Navegação e Pills
+         ======================================================================= -->
+    <section class="section-swipe-slider" id="experiencia" aria-label="Experiências Vyva">
+      
+      <!-- Cabeçalho Minimalista Integrado / Pill Tabs Flutuantes -->
+      <div class="swipe-slider-nav-wrap">
+        <div class="swipe-slider-badge section-header__tag">VIVÊNCIA VYVA • 8 PILARES</div>
+        <nav class="swipe-dots-nav" aria-label="Seleção rápida de pilares">
+          <button type="button" class="swipe-dot is-active" data-index="0"><span>STAY</span></button>
+          <button type="button" class="swipe-dot" data-index="1"><span>WELL</span></button>
+          <button type="button" class="swipe-dot" data-index="2"><span>TASTE</span></button>
+          <button type="button" class="swipe-dot" data-index="3"><span>MOVE</span></button>
+          <button type="button" class="swipe-dot" data-index="4"><span>EXPLORE</span></button>
+          <button type="button" class="swipe-dot" data-index="5"><span>LIVE</span></button>
+          <button type="button" class="swipe-dot" data-index="6"><span>CONNECT</span></button>
+          <button type="button" class="swipe-dot" data-index="7"><span>CARE</span></button>
+        </nav>
+        <div class="swipe-counter swipe-counter--mobile" aria-label="Contador de pilares">
+          <span class="swipe-counter__current">01</span>
+          <span class="swipe-counter__divider">/</span>
+          <span class="swipe-counter__total">08</span>
+        </div>
+      </div>
+
+      <!-- Container do Swipe Slider (Viewport) -->
+      <div class="swipe-slider-container">
+
+        <!-- Slide 1: STAY -->
+        <article class="swipe-slide is-active" data-index="0">
+          <div class="swipe-slide__outer outer">
+            <div class="swipe-slide__inner inner">
+              <div class="swipe-slide__bg bg" style="background-image: url('images/Stay.png');">
+                <div class="swipe-slide__overlay"></div>
+                <div class="swipe-slide__content">
+                  <h2 class="swipe-slide__title">STAY</h2>
+                  <p class="swipe-slide__subtitle">Conforto e hospitalidade.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <!-- Slide 2: WELL -->
+        <article class="swipe-slide" data-index="1">
+          <div class="swipe-slide__outer outer">
+            <div class="swipe-slide__inner inner">
+              <div class="swipe-slide__bg bg" style="background-image: url('images/Well.png');">
+                <div class="swipe-slide__overlay"></div>
+                <div class="swipe-slide__content">
+                  <h2 class="swipe-slide__title">WELL</h2>
+                  <p class="swipe-slide__subtitle">Wellness e bem-estar.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <!-- Slide 3: TASTE -->
+        <article class="swipe-slide" data-index="2">
+          <div class="swipe-slide__outer outer">
+            <div class="swipe-slide__inner inner">
+              <div class="swipe-slide__bg bg" style="background-image: url('images/Taste.png');">
+                <div class="swipe-slide__overlay"></div>
+                <div class="swipe-slide__content">
+                  <h2 class="swipe-slide__title">TASTE</h2>
+                  <p class="swipe-slide__subtitle">Gastronomia e sabores.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <!-- Slide 4: MOVE -->
+        <article class="swipe-slide" data-index="3">
+          <div class="swipe-slide__outer outer">
+            <div class="swipe-slide__inner inner">
+              <div class="swipe-slide__bg bg" style="background-image: url('images/Move.png');">
+                <div class="swipe-slide__overlay"></div>
+                <div class="swipe-slide__content">
+                  <h2 class="swipe-slide__title">MOVE</h2>
+                  <p class="swipe-slide__subtitle">Mobilidade sem fricção.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <!-- Slide 5: EXPLORE -->
+        <article class="swipe-slide" data-index="4">
+          <div class="swipe-slide__outer outer">
+            <div class="swipe-slide__inner inner">
+              <div class="swipe-slide__bg bg" style="background-image: url('images/Explore.png');">
+                <div class="swipe-slide__overlay"></div>
+                <div class="swipe-slide__content">
+                  <h2 class="swipe-slide__title">EXPLORE</h2>
+                  <p class="swipe-slide__subtitle">Descobertas e experiências.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <!-- Slide 6: LIVE -->
+        <article class="swipe-slide" data-index="5">
+          <div class="swipe-slide__outer outer">
+            <div class="swipe-slide__inner inner">
+              <div class="swipe-slide__bg bg" style="background-image: url('images/Live.png');">
+                <div class="swipe-slide__overlay"></div>
+                <div class="swipe-slide__content">
+                  <h2 class="swipe-slide__title">LIVE</h2>
+                  <p class="swipe-slide__subtitle">Eventos e encontros.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <!-- Slide 7: CONNECT -->
+        <article class="swipe-slide" data-index="6">
+          <div class="swipe-slide__outer outer">
+            <div class="swipe-slide__inner inner">
+              <div class="swipe-slide__bg bg" style="background-image: url('images/connect.png');">
+                <div class="swipe-slide__overlay"></div>
+                <div class="swipe-slide__content">
+                  <h2 class="swipe-slide__title">CONNECT</h2>
+                  <p class="swipe-slide__subtitle">Tecnologia e conveniência.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <!-- Slide 8: CARE -->
+        <article class="swipe-slide" data-index="7">
+          <div class="swipe-slide__outer outer">
+            <div class="swipe-slide__inner inner">
+              <div class="swipe-slide__bg bg" style="background-image: url('images/Care.png');">
+                <div class="swipe-slide__overlay"></div>
+                <div class="swipe-slide__content">
+                  <h2 class="swipe-slide__title">CARE</h2>
+                  <p class="swipe-slide__subtitle">Cuidado em cada detalhe.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </article>
+
+      </div>
+
+      <!-- Barra de Controle Inferior (Contador + Botões Padrão 8px) -->
+      <div class="swipe-bottom-controls">
+        <div class="swipe-counter swipe-counter--desktop">
+          <span class="swipe-counter__current">01</span>
+          <span class="swipe-counter__divider">/</span>
+          <span class="swipe-counter__total">08</span>
+        </div>
+
+        <div class="swipe-nav-actions">
+          <button type="button" class="btn btn-secondary Magnetic-Button-glass swipe-btn swipe-btn--prev" aria-label="Pilar anterior">
+            <span class="btn-text">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <line x1="19" y1="12" x2="5" y2="12"></line>
+                <polyline points="12 19 5 12 12 5"></polyline>
+              </svg>
+              Anterior
+            </span>
+          </button>
+          <button type="button" class="btn btn-primary Magnetic-Button-solid swipe-btn swipe-btn--next button-lighting" aria-label="Próximo pilar">
+            <span class="btn-text">
+              Próximo
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <line x1="5" y1="12" x2="19" y2="12"></line>
+                <polyline points="12 5 19 12 12 19"></polyline>
+              </svg>
+            </span>
+          </button>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- =======================================================================
+         05. CARROSSEL GSAP HORIZONTAL SCROLLING GALLERY
+         Inspirado na demo oficial GSAP (Horizontal scrolling gallery com ScrollTrigger)
+         5 Destinos e Experiências Turísticas (Turism01.png a Turism05.png)
+         ======================================================================= -->
+    <section class="section-horiz-gallery" id="galeria-turismo">
+      <div class="horiz-gallery__container">
+        <!-- Cabeçalho da Galeria Horizontal -->
+        <div class="horiz-gallery__header container">
+          <div class="horiz-gallery__header-inner">
+            <div class="horiz-gallery__titles">
+              <span class="section-header__tag">Roteiros & Vivências Exclusivas</span>
+              <h2 class="horiz-gallery__heading">Turismo e Vivências Singulares</h2>
+              <p class="horiz-gallery__subheading">Deslize para explorar cenários paradisíacos, refúgios à beira-mar e estadias com governança de alto padrão.</p>
+            </div>
+            
+            <!-- Indicador visual de rolagem horizontal -->
+            <div class="horiz-gallery__tracker">
+              <span class="tracker-label">Role para navegar</span>
+              <div class="horiz-gallery__progress-track">
+                <div class="horiz-gallery__progress-bar"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tira Horizontal (Eixo de rolagem e pinning GSAP) -->
+        <div class="horiz-gallery-wrapper">
+          <div class="horiz-gallery-strip">
+
+            <!-- Card 01 -->
+            <article class="horiz-card">
+              <div class="horiz-card__media">
+                <img src="images/Turism01.png" alt="American Airlines Center - Dallas, EUA" class="horiz-card__img" loading="lazy">
+                <div class="horiz-card__overlay"></div>
+              </div>
+              <div class="horiz-card__badge">
+                <span class="horiz-card__num">01</span>
+                <span class="horiz-card__tag">Dallas, EUA</span>
+              </div>
+              <div class="horiz-card__content">
+                <h3 class="horiz-card__title">American Airlines Center</h3>
+                <a href="#destinos" class="horiz-card__btn">
+                  <span>Conhecer Destino</span>
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M5 12h14M12 5l7 7-7 7"/>
+                  </svg>
+                </a>
+              </div>
+            </article>
+
+            <!-- Card 02 -->
+            <article class="horiz-card">
+              <div class="horiz-card__media">
+                <img src="images/Turism02.png" alt="Sampa Sky - São Paulo, Brasil" class="horiz-card__img" loading="lazy">
+                <div class="horiz-card__overlay"></div>
+              </div>
+              <div class="horiz-card__badge">
+                <span class="horiz-card__num">02</span>
+                <span class="horiz-card__tag">São Paulo, Brasil</span>
+              </div>
+              <div class="horiz-card__content">
+                <h3 class="horiz-card__title">Sampa Sky</h3>
+                <a href="#destinos" class="horiz-card__btn">
+                  <span>Conhecer Destino</span>
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M5 12h14M12 5l7 7-7 7"/>
+                  </svg>
+                </a>
+              </div>
+            </article>
+
+            <!-- Card 03 -->
+            <article class="horiz-card">
+              <div class="horiz-card__media">
+                <img src="images/Turism03.png" alt="Catedral da Sé - São Paulo, Brasil" class="horiz-card__img" loading="lazy">
+                <div class="horiz-card__overlay"></div>
+              </div>
+              <div class="horiz-card__badge">
+                <span class="horiz-card__num">03</span>
+                <span class="horiz-card__tag">São Paulo, Brasil</span>
+              </div>
+              <div class="horiz-card__content">
+                <h3 class="horiz-card__title">Catedral da Sé</h3>
+                <a href="#destinos" class="horiz-card__btn">
+                  <span>Conhecer Destino</span>
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M5 12h14M12 5l7 7-7 7"/>
+                  </svg>
+                </a>
+              </div>
+            </article>
+
+            <!-- Card 04 -->
+            <article class="horiz-card">
+              <div class="horiz-card__media">
+                <img src="images/Turism04.png" alt="Parque da Água Branca - São Paulo, Brasil" class="horiz-card__img" loading="lazy">
+                <div class="horiz-card__overlay"></div>
+              </div>
+              <div class="horiz-card__badge">
+                <span class="horiz-card__num">04</span>
+                <span class="horiz-card__tag">São Paulo, Brasil</span>
+              </div>
+              <div class="horiz-card__content">
+                <h3 class="horiz-card__title">Parque da Água Branca</h3>
+                <a href="#destinos" class="horiz-card__btn">
+                  <span>Conhecer Destino</span>
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M5 12h14M12 5l7 7-7 7"/>
+                  </svg>
+                </a>
+              </div>
+            </article>
+
+            <!-- Card 05 -->
+            <article class="horiz-card">
+              <div class="horiz-card__media">
+                <img src="images/Turism05.png" alt="Praias de Gabriela Cravo e Canela - Ilhéus, Brasil" class="horiz-card__img" loading="lazy">
+                <div class="horiz-card__overlay"></div>
+              </div>
+              <div class="horiz-card__badge">
+                <span class="horiz-card__num">05</span>
+                <span class="horiz-card__tag">Ilhéus, Brasil</span>
+              </div>
+              <div class="horiz-card__content">
+                <h3 class="horiz-card__title">Praias de Gabriela Cravo e Canela</h3>
+                <a href="#destinos" class="horiz-card__btn">
+                  <span>Conhecer Destino</span>
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M5 12h14M12 5l7 7-7 7"/>
+                  </svg>
+                </a>
+              </div>
+            </article>
+
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- =======================================================================
+         06. QUEM SOMOS + PROOF POINTS (NÚMEROS VALIDADOS)
+         - Origem operacional em 2019
+         - Consolidação nos EUA e expansão no Brasil
+         - 7 anos / 21 mil+ unidades / 15+ cidades / 2 países
+         ======================================================================= -->
+    <section class="section-about" id="sobre">
+      <div class="container">
+        <div class="about-box lighting-move-border">
+          <div class="about-intro">
+            <span class="section-header__tag">Nossa Trajetória</span>
+            <h2 class="about-intro__title">Hospitalidade construída a partir da excelência operacional.</h2>
+            <p class="about-intro__text">
+              A nossa história teve início em setembro de 2019, nos Estados Unidos, com a PHP General Services. Consolidamos nossa atuação com rigor técnico em manutenção, facilities e gestão de propriedades no mercado americano. Hoje, a VYVA Homes expande essa autoridade para o Brasil, unindo inteligência imobiliária, design e rentabilidade consistente.
+            </p>
+          </div>
+
+          <div class="about-video-col">
+            <div
+              class="about-video-card video-modal-trigger"
+              data-video-src="images/Reels institucional.webm"
+              data-video-poster="images/reels-institucional-capa.png"
+              data-video-aspect="vertical"
+              role="button"
+              tabindex="0"
+              aria-label="Assistir Reels Institucional VYVA Homes"
+            >
+              <div class="about-video-media">
+                <img
+                  src="images/reels-institucional-capa.png"
+                  alt="VYVA Homes — Reels Institucional"
+                  class="about-video-thumb"
+                  loading="lazy"
+                >
+                <div class="video-showcase-overlay"></div>
+              </div>
+
+              <button
+                type="button"
+                class="video-play-btn lighting-move-border-hover"
+                aria-label="Reproduzir vídeo institucional"
+              >
+                <span class="video-play-btn__icon" aria-hidden="true">
+                  <svg width="26" height="26" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M8.25 5.65c0-.65.71-1.05 1.27-.71l9.05 5.55c.53.32.53 1.1 0 1.42L9.52 17.46c-.56.34-1.27-.06-1.27-.71V5.65z"/>
+                  </svg>
+                </span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  <!-- =======================================================================
+         06. OUR FOOTPRINT (PRESENÇA GEOGRÁFICA) - GSAP INFINITE CARD SLIDER
+         - 29 Cidades (EUA & Brasil)
+         - Drag horizontal suave com mouse e touch + navegação por botões padrão
+         ======================================================================= -->
+    <section class="section-footprint section-destinos-slider section-reels-slider" id="destinos">
+      
+      <!-- Cabeçalho da Seção -->
+      <div class="destinos-slider-header reels-slider-header container site-container">
+        <span class="destinos-slider-tag reels-slider-tag section-header__tag">NOSSA PRESENÇA</span>
+        <h2 class="destinos-slider-title reels-slider-title section-header__title">
+          Uma marca.<br><span class="text-orange">Diferentes destinos.</span>
+        </h2>
+        <p class="destinos-slider-subtitle reels-slider-subtitle section-header__desc">
+          Lugares que moldaram nossa operação e destinos que definem o futuro da hospitalidade.
+        </p>
+      </div>
+
+      <!-- Container do Slider (Gallery) -->
+      <div class="destinos-gallery-container reels-gallery-container gallery">
+        <ul class="destinos-cards-list reels-cards-list cards">
+
+          <!-- 1. Dallas -->
+          <li class="destinos-card" style="background-image: url('images/Cidade-Dallas.jpg');" data-country="EUA" data-city="Dallas" aria-label="Dallas, EUA">
+            <div class="destinos-card__overlay"></div>
+            <div class="destinos-card__badge">
+              <span class="horiz-card__tag">EUA</span>
+            </div>
+            <div class="destinos-card__content">
+              <h3 class="destinos-card__name">Dallas</h3>
+            </div>
+          </li>
+
+          <!-- 2. Plano -->
+          <li class="destinos-card" style="background-image: url('images/Cidade-Plano.jpg');" data-country="EUA" data-city="Plano" aria-label="Plano, EUA">
+            <div class="destinos-card__overlay"></div>
+            <div class="destinos-card__badge">
+              <span class="horiz-card__tag">EUA</span>
+            </div>
+            <div class="destinos-card__content">
+              <h3 class="destinos-card__name">Plano</h3>
+            </div>
+          </li>
+
+          <!-- 3. Frisco -->
+          <li class="destinos-card" style="background-image: url('images/Cidade-Frisco.jpg');" data-country="EUA" data-city="Frisco" aria-label="Frisco, EUA">
+            <div class="destinos-card__overlay"></div>
+            <div class="destinos-card__badge">
+              <span class="horiz-card__tag">EUA</span>
+            </div>
+            <div class="destinos-card__content">
+              <h3 class="destinos-card__name">Frisco</h3>
+            </div>
+          </li>
+
+          <!-- 4. McKinney -->
+          <li class="destinos-card" style="background-image: url('images/Cidade-McKinney.jpg');" data-country="EUA" data-city="McKinney" aria-label="McKinney, EUA">
+            <div class="destinos-card__overlay"></div>
+            <div class="destinos-card__badge">
+              <span class="horiz-card__tag">EUA</span>
+            </div>
+            <div class="destinos-card__content">
+              <h3 class="destinos-card__name">McKinney</h3>
+            </div>
+          </li>
+
+          <!-- 5. Allen -->
+          <li class="destinos-card" style="background-image: url('images/Cidade-Allen.jpg');" data-country="EUA" data-city="Allen" aria-label="Allen, EUA">
+            <div class="destinos-card__overlay"></div>
+            <div class="destinos-card__badge">
+              <span class="horiz-card__tag">EUA</span>
+            </div>
+            <div class="destinos-card__content">
+              <h3 class="destinos-card__name">Allen</h3>
+            </div>
+          </li>
+
+          <!-- 6. Prosper -->
+          <li class="destinos-card" style="background-image: url('images/Cidade-Prosper.jpg');" data-country="EUA" data-city="Prosper" aria-label="Prosper, EUA">
+            <div class="destinos-card__overlay"></div>
+            <div class="destinos-card__badge">
+              <span class="horiz-card__tag">EUA</span>
+            </div>
+            <div class="destinos-card__content">
+              <h3 class="destinos-card__name">Prosper</h3>
+            </div>
+          </li>
+
+          <!-- 7. Celina -->
+          <li class="destinos-card" style="background-image: url('images/Cidade-Celina.jpg');" data-country="EUA" data-city="Celina" aria-label="Celina, EUA">
+            <div class="destinos-card__overlay"></div>
+            <div class="destinos-card__badge">
+              <span class="horiz-card__tag">EUA</span>
+            </div>
+            <div class="destinos-card__content">
+              <h3 class="destinos-card__name">Celina</h3>
+            </div>
+          </li>
+
+          <!-- 8. Little Elm -->
+          <li class="destinos-card" style="background-image: url('images/Cidade-Little-Elm.jpg');" data-country="EUA" data-city="Little Elm" aria-label="Little Elm, EUA">
+            <div class="destinos-card__overlay"></div>
+            <div class="destinos-card__badge">
+              <span class="horiz-card__tag">EUA</span>
+            </div>
+            <div class="destinos-card__content">
+              <h3 class="destinos-card__name">Little Elm</h3>
+            </div>
+          </li>
+
+          <!-- 9. The Colony -->
+          <li class="destinos-card" style="background-image: url('images/Cidade-The-Colony.jpg');" data-country="EUA" data-city="The Colony" aria-label="The Colony, EUA">
+            <div class="destinos-card__overlay"></div>
+            <div class="destinos-card__badge">
+              <span class="horiz-card__tag">EUA</span>
+            </div>
+            <div class="destinos-card__content">
+              <h3 class="destinos-card__name">The Colony</h3>
+            </div>
+          </li>
+
+          <!-- 10. Carrollton -->
+          <li class="destinos-card" style="background-image: url('images/Cidade-Carrollton.jpg');" data-country="EUA" data-city="Carrollton" aria-label="Carrollton, EUA">
+            <div class="destinos-card__overlay"></div>
+            <div class="destinos-card__badge">
+              <span class="horiz-card__tag">EUA</span>
+            </div>
+            <div class="destinos-card__content">
+              <h3 class="destinos-card__name">Carrollton</h3>
+            </div>
+          </li>
+
+          <!-- 11. Lewisville -->
+          <li class="destinos-card" style="background-image: url('images/Cidade-Lewisville.jpg');" data-country="EUA" data-city="Lewisville" aria-label="Lewisville, EUA">
+            <div class="destinos-card__overlay"></div>
+            <div class="destinos-card__badge">
+              <span class="horiz-card__tag">EUA</span>
+            </div>
+            <div class="destinos-card__content">
+              <h3 class="destinos-card__name">Lewisville</h3>
+            </div>
+          </li>
+
+          <!-- 12. Farmers Branch -->
+          <li class="destinos-card" style="background-image: url('images/Cidade-Farmers-Branch.jpg');" data-country="EUA" data-city="Farmers Branch" aria-label="Farmers Branch, EUA">
+            <div class="destinos-card__overlay"></div>
+            <div class="destinos-card__badge">
+              <span class="horiz-card__tag">EUA</span>
+            </div>
+            <div class="destinos-card__content">
+              <h3 class="destinos-card__name">Farmers Branch</h3>
+            </div>
+          </li>
+
+          <!-- 13. Richardson -->
+          <li class="destinos-card" style="background-image: url('images/Cidade-Richardson.jpg');" data-country="EUA" data-city="Richardson" aria-label="Richardson, EUA">
+            <div class="destinos-card__overlay"></div>
+            <div class="destinos-card__badge">
+              <span class="horiz-card__tag">EUA</span>
+            </div>
+            <div class="destinos-card__content">
+              <h3 class="destinos-card__name">Richardson</h3>
+            </div>
+          </li>
+
+          <!-- 14. Garland -->
+          <li class="destinos-card" style="background-image: url('images/Cidade-Garland.jpg');" data-country="EUA" data-city="Garland" aria-label="Garland, EUA">
+            <div class="destinos-card__overlay"></div>
+            <div class="destinos-card__badge">
+              <span class="horiz-card__tag">EUA</span>
+            </div>
+            <div class="destinos-card__content">
+              <h3 class="destinos-card__name">Garland</h3>
+            </div>
+          </li>
+
+          <!-- 15. Rowlett -->
+          <li class="destinos-card" style="background-image: url('images/Cidade-Rowlett.jpg');" data-country="EUA" data-city="Rowlett" aria-label="Rowlett, EUA">
+            <div class="destinos-card__overlay"></div>
+            <div class="destinos-card__badge">
+              <span class="horiz-card__tag">EUA</span>
+            </div>
+            <div class="destinos-card__content">
+              <h3 class="destinos-card__name">Rowlett</h3>
+            </div>
+          </li>
+
+          <!-- 16. Irving -->
+          <li class="destinos-card" style="background-image: url('images/Cidade-Irving.jpg');" data-country="EUA" data-city="Irving" aria-label="Irving, EUA">
+            <div class="destinos-card__overlay"></div>
+            <div class="destinos-card__badge">
+              <span class="horiz-card__tag">EUA</span>
+            </div>
+            <div class="destinos-card__content">
+              <h3 class="destinos-card__name">Irving</h3>
+            </div>
+          </li>
+
+          <!-- 17. Arlington -->
+          <li class="destinos-card" style="background-image: url('images/Cidade-Arlington.jpg');" data-country="EUA" data-city="Arlington" aria-label="Arlington, EUA">
+            <div class="destinos-card__overlay"></div>
+            <div class="destinos-card__badge">
+              <span class="horiz-card__tag">EUA</span>
+            </div>
+            <div class="destinos-card__content">
+              <h3 class="destinos-card__name">Arlington</h3>
+            </div>
+          </li>
+
+          <!-- 18. Fort Worth -->
+          <li class="destinos-card" style="background-image: url('images/Cidade-Fort-Worth.jpg');" data-country="EUA" data-city="Fort Worth" aria-label="Fort Worth, EUA">
+            <div class="destinos-card__overlay"></div>
+            <div class="destinos-card__badge">
+              <span class="horiz-card__tag">EUA</span>
+            </div>
+            <div class="destinos-card__content">
+              <h3 class="destinos-card__name">Fort Worth</h3>
+            </div>
+          </li>
+
+          <!-- 19. Denton -->
+          <li class="destinos-card" style="background-image: url('images/Cidade-Denton.jpg');" data-country="EUA" data-city="Denton" aria-label="Denton, EUA">
+            <div class="destinos-card__overlay"></div>
+            <div class="destinos-card__badge">
+              <span class="horiz-card__tag">EUA</span>
+            </div>
+            <div class="destinos-card__content">
+              <h3 class="destinos-card__name">Denton</h3>
+            </div>
+          </li>
+
+          <!-- 20. Grapevine -->
+          <li class="destinos-card" style="background-image: url('images/Cidade-Grapevine.jpg');" data-country="EUA" data-city="Grapevine" aria-label="Grapevine, EUA">
+            <div class="destinos-card__overlay"></div>
+            <div class="destinos-card__badge">
+              <span class="horiz-card__tag">EUA</span>
+            </div>
+            <div class="destinos-card__content">
+              <h3 class="destinos-card__name">Grapevine</h3>
+            </div>
+          </li>
+
+          <!-- 21. Southlake -->
+          <li class="destinos-card" style="background-image: url('images/Cidade-Southlake.jpg');" data-country="EUA" data-city="Southlake" aria-label="Southlake, EUA">
+            <div class="destinos-card__overlay"></div>
+            <div class="destinos-card__badge">
+              <span class="horiz-card__tag">EUA</span>
+            </div>
+            <div class="destinos-card__content">
+              <h3 class="destinos-card__name">Southlake</h3>
+            </div>
+          </li>
+
+          <!-- 22. Wylie -->
+          <li class="destinos-card" style="background-image: url('images/Cidade-Wylie.jpg');" data-country="EUA" data-city="Wylie" aria-label="Wylie, EUA">
+            <div class="destinos-card__overlay"></div>
+            <div class="destinos-card__badge">
+              <span class="horiz-card__tag">EUA</span>
+            </div>
+            <div class="destinos-card__content">
+              <h3 class="destinos-card__name">Wylie</h3>
+            </div>
+          </li>
+
+          <!-- 23. Anna -->
+          <li class="destinos-card" style="background-image: url('images/Cidade-Anna.jpg');" data-country="EUA" data-city="Anna" aria-label="Anna, EUA">
+            <div class="destinos-card__overlay"></div>
+            <div class="destinos-card__badge">
+              <span class="horiz-card__tag">EUA</span>
+            </div>
+            <div class="destinos-card__content">
+              <h3 class="destinos-card__name">Anna</h3>
+            </div>
+          </li>
+
+          <!-- 24. Itacaré -->
+          <li class="destinos-card" style="background-image: url('images/Cidade-Itacare.jpg');" data-country="Brasil" data-city="Itacaré" aria-label="Itacaré, Brasil">
+            <div class="destinos-card__overlay"></div>
+            <div class="destinos-card__badge">
+              <span class="horiz-card__tag">Brasil</span>
+            </div>
+            <div class="destinos-card__content">
+              <h3 class="destinos-card__name">Itacaré</h3>
+            </div>
+          </li>
+
+          <!-- 25. Ilhéus -->
+          <li class="destinos-card" style="background-image: url('images/Cidade-Ilheus.jpg');" data-country="Brasil" data-city="Ilhéus" aria-label="Ilhéus, Brasil">
+            <div class="destinos-card__overlay"></div>
+            <div class="destinos-card__badge">
+              <span class="horiz-card__tag">Brasil</span>
+            </div>
+            <div class="destinos-card__content">
+              <h3 class="destinos-card__name">Ilhéus</h3>
+            </div>
+          </li>
+
+          <!-- 26. Ilha de Comandatuba -->
+          <li class="destinos-card" style="background-image: url('images/Cidade-Ilha-de-Comandatuba.jpg');" data-country="Brasil" data-city="Ilha de Comandatuba" aria-label="Ilha de Comandatuba, Brasil">
+            <div class="destinos-card__overlay"></div>
+            <div class="destinos-card__badge">
+              <span class="horiz-card__tag">Brasil</span>
+            </div>
+            <div class="destinos-card__content">
+              <h3 class="destinos-card__name">Ilha de Comandatuba</h3>
+            </div>
+          </li>
+
+          <!-- 27. Maraú -->
+          <li class="destinos-card" style="background-image: url('images/Cidade-Marau.jpg');" data-country="Brasil" data-city="Maraú" aria-label="Maraú, Brasil">
+            <div class="destinos-card__overlay"></div>
+            <div class="destinos-card__badge">
+              <span class="horiz-card__tag">Brasil</span>
+            </div>
+            <div class="destinos-card__content">
+              <h3 class="destinos-card__name">Maraú</h3>
+            </div>
+          </li>
+
+          <!-- 28. Serra Grande -->
+          <li class="destinos-card" style="background-image: url('images/Cidade-Serra-Grande.jpg');" data-country="Brasil" data-city="Serra Grande" aria-label="Serra Grande, Brasil">
+            <div class="destinos-card__overlay"></div>
+            <div class="destinos-card__badge">
+              <span class="horiz-card__tag">Brasil</span>
+            </div>
+            <div class="destinos-card__content">
+              <h3 class="destinos-card__name">Serra Grande</h3>
+            </div>
+          </li>
+
+          <!-- 29. São Paulo -->
+          <li class="destinos-card" style="background-image: url('images/Cidade-Sao-Paulo.jpg');" data-country="Brasil" data-city="São Paulo" aria-label="São Paulo, Brasil">
+            <div class="destinos-card__overlay"></div>
+            <div class="destinos-card__badge">
+              <span class="horiz-card__tag">Brasil</span>
+            </div>
+            <div class="destinos-card__content">
+              <h3 class="destinos-card__name">São Paulo</h3>
+            </div>
+          </li>
+
+        </ul>
+
+        <!-- Botões de Ação (Anterior e Próximo) -->
+        <div class="destinos-actions reels-actions actions">
+          <button type="button" class="btn btn-secondary Magnetic-Button-glass destinos-btn-prev reels-btn-prev prev" data-magnetic="true" aria-label="Destino anterior">
+            <span class="btn-text">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <line x1="19" y1="12" x2="5" y2="12"></line>
+                <polyline points="12 19 5 12 12 5"></polyline>
+              </svg>
+              Anterior
+            </span>
+          </button>
+          <button type="button" class="btn btn-primary Magnetic-Button-solid destinos-btn-next reels-btn-next next button-lighting" data-magnetic="true" aria-label="Próximo destino">
+            <span class="btn-text">
+              Próximo
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <line x1="5" y1="12" x2="19" y2="12"></line>
+                <polyline points="12 5 19 12 12 19"></polyline>
+              </svg>
+            </span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Proxy Invisível para o Draggable GSAP -->
+      <div class="drag-proxy destinos-drag-proxy" aria-hidden="true"></div>
+
+    </section>
+
+    <!-- =======================================================================
+         07. CORPORATE, INCORPORADORES & HOTELARIA (SOLUÇÕES B2B)
+         - Card 1: Para Incorporadores & Construtores (By VYVA)
+         - Card 2: Para Proprietários & Investidores (Gestão VYVA Homes)
+         - Card 3: Para Hotéis & Resorts (Operação Hoteleira)
+         ======================================================================= -->
+    <section class="section-b2b" id="corporate">
+      <div class="container">
+        <div class="b2b-grid">
+          <!-- CARD 1: Incorporadores & Construtores -->
+          <div class="b2b-col lighting-move-border-hover">
+            <span class="b2b-col__tag">Para Incorporadores & Construtores</span>
+            <h3 class="b2b-col__title">By VYVA</h3>
+            <p class="b2b-col__subtitle">Hospitalidade integrada ao produto desde a concepção.</p>
+
+            <ul class="b2b-items">
+              <li class="b2b-item">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+                <span>Estudo de mercado e posicionamento</span>
+              </li>
+              <li class="b2b-item">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+                <span>Mix, áreas comuns e amenidades</span>
+              </li>
+              <li class="b2b-item">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+                <span>Modelagem operacional e de serviços</span>
+              </li>
+              <li class="b2b-item">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+                <span>Estratégia de experiência e hospitalidade</span>
+              </li>
+            </ul>
+
+            <div>
+              <a href="https://wa.me/557398130646" target="_blank" rel="noopener noreferrer" class="btn-roll btn-roll--primary button-lighting">
+                <span class="btn-roll__inner">
+                  <span class="btn-roll__text">Conheça o By VYVA</span>
+                  <span class="btn-roll__text btn-roll__text--clone" aria-hidden="true">Conheça o By VYVA</span>
+                </span>
+              </a>
+            </div>
+          </div>
+
+          <!-- CARD 2: Proprietários & Investidores -->
+          <div class="b2b-col lighting-move-border-hover">
+            <span class="b2b-col__tag">Para Proprietários & Investidores</span>
+            <h3 class="b2b-col__title">Gestão VYVA Homes</h3>
+            <p class="b2b-col__subtitle">Operação completa para transformar imóveis em ativos de hospitalidade.</p>
+
+            <ul class="b2b-items">
+              <li class="b2b-item">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+                <span>Reservas e Revenue Management</span>
+              </li>
+              <li class="b2b-item">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+                <span>Atendimento e experiência do hóspede</span>
+              </li>
+              <li class="b2b-item">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+                <span>Housekeeping e manutenção</span>
+              </li>
+              <li class="b2b-item">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+                <span>Tecnologia e gestão de performance</span>
+              </li>
+            </ul>
+
+            <div>
+              <a href="https://wa.me/557398130646" target="_blank" rel="noopener noreferrer" class="btn-roll btn-roll--primary button-lighting">
+                <span class="btn-roll__inner">
+                  <span class="btn-roll__text">Opere com a VYVA</span>
+                  <span class="btn-roll__text btn-roll__text--clone" aria-hidden="true">Opere com a VYVA</span>
+                </span>
+              </a>
+            </div>
+          </div>
+
+          <!-- CARD 3: Hotéis & Resorts -->
+          <div class="b2b-col lighting-move-border-hover">
+            <span class="b2b-col__tag">Para Hotéis & Resorts</span>
+            <h3 class="b2b-col__title">Operação Hoteleira</h3>
+            <p class="b2b-col__subtitle">Reposicionamos e operamos ativos de hospitalidade em busca de mais eficiência e performance.</p>
+
+            <ul class="b2b-items">
+              <li class="b2b-item">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+                <span>Diagnóstico e reposicionamento</span>
+              </li>
+              <li class="b2b-item">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+                <span>Gestão comercial e operacional</span>
+              </li>
+              <li class="b2b-item">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+                <span>Revenue Management e distribuição</span>
+              </li>
+              <li class="b2b-item">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+                <span>Experiências, eventos e novas receitas</span>
+              </li>
+            </ul>
+
+            <div>
+              <a href="https://wa.me/557398130646" target="_blank" rel="noopener noreferrer" class="btn-roll btn-roll--primary button-lighting">
+                <span class="btn-roll__inner">
+                  <span class="btn-roll__text">Fale com a VYVA</span>
+                  <span class="btn-roll__text btn-roll__text--clone" aria-hidden="true">Fale com a VYVA</span>
+                </span>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- =======================================================================
+         08. DESTINOS RESERVÁVEIS & CTA FINAL
+         - The stay is just the beginning
+         ======================================================================= -->
+    <section class="section-cta-final">
+      <div class="container">
+        <div class="final-cta-box">
+          <span class="section-header__tag">Seu Próximo Destino</span>
+          <h2 class="final-cta-title">The stay is just the beginning.</h2>
+          <p class="final-cta-desc">Descubra uma nova era de estadias onde conforto residencial, design e experiências autênticas caminham juntos.</p>
+
+          <a href="#reservas" class="btn-roll btn-roll--primary button-lighting">
+            <span class="btn-roll__inner">
+              <span class="btn-roll__text">Escolher Destino & Reservar</span>
+              <span class="btn-roll__text btn-roll__text--clone" aria-hidden="true">Escolher Destino & Reservar</span>
+            </span>
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- =======================================================================
+         FOTOS LOCAIS - MOSAICO COM PARALLAX EXTERNO
+         Camada Externa: Scroll Parallax Externo (card-track e card-outer)
+         ======================================================================= -->
+    <section class="section-local-photos" id="Fotos-locais">
+      <div class="container">
+        <div class="editorial-grid mosaic-grid">
+
+          <!-- LINHA 1 DO MOSAICO (Wide Esquerda + Square Direita) -->
+          <div class="editorial-row row-1">
+            <!-- Foto 1: Pátio com poltronas e parede de pedra -->
+            <div class="col-left card-wide">
+              <div class="card-track" data-track-speed="0.12">
+                <div class="card-outer">
+                  <div class="card-inner-box">
+                    <div class="card-img-wrapper">
+                      <img src="images/Locais-aleatorios 1.png?v=3" alt="Pátio externo com poltronas de fibra natural e jardim" loading="lazy">
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Foto 2: Poltrona e taça de vinho à beira da piscina com vista para as montanhas -->
+            <div class="col-right card-tall">
+              <div class="card-track" data-track-speed="-0.12">
+                <div class="card-outer">
+                  <div class="card-inner-box">
+                    <div class="card-img-wrapper">
+                      <img src="images/Locais-aleatorios 2.png?v=3" alt="Vista para as montanhas à beira da piscina" loading="lazy">
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- LINHA 2 DO MOSAICO (Vertical Esquerda + Wide Direita) -->
+          <div class="editorial-row reverse row-2">
+            <!-- Foto 3: Momento de lazer na piscina com drink tropical -->
+            <div class="col-left card-tall">
+              <div class="card-track" data-track-speed="0.12">
+                <div class="card-outer">
+                  <div class="card-inner-box">
+                    <div class="card-img-wrapper">
+                      <img src="images/Locais-aleatorios 4.png?v=3" alt="Experiência de lazer e descontração na piscina" loading="lazy">
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Card 4: Lareira externa ao pôr do sol nas montanhas (Background Video) -->
+            <div class="col-right card-wide">
+              <div class="card-track" data-track-speed="-0.12">
+                <div class="card-outer">
+                  <div class="card-inner-box">
+                    <div class="card-img-wrapper">
+                      <video
+                        src="images/fireanimation.mp4"
+                        poster="images/Locais-aleatorios 3.png?v=3"
+                        autoplay
+                        muted
+                        loop
+                        playsinline
+                        aria-label="Lareira externa ao pôr do sol com vista para as montanhas"
+                      ></video>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- =======================================================================
+         SEÇÃO DE VÍDEO INSTITUCIONAL
+         - Botão de play com lighting-move-border ao passar o mouse no vídeo
+         - Ao clicar abre centralizado na tela com overlay de background blur
+         ======================================================================= -->
+    <section class="section-video-showcase" id="video-institucional">
+      <div class="container">
+        <div
+          class="video-showcase-card video-modal-trigger lighting-move-border-hover"
+          id="videoShowcaseTrigger"
+          data-video-id="2zFKQnk70zM"
+          data-video-src="images/video-vyva.mp4"
+          data-video-poster="images/video-thumb-vyva.jpg"
+          data-video-aspect="horizontal"
+          role="button"
+          tabindex="0"
+          aria-label="Assistir vídeo VYVA Homes"
+        >
+          <div class="video-showcase-media">
+            <img
+              src="images/video-thumb-vyva.jpg"
+              onerror="this.onerror=null;this.src='https://i.ytimg.com/vi/2zFKQnk70zM/maxresdefault.jpg';"
+              alt="VYVA Homes | Hospitality. Technology. Experience."
+              class="video-showcase-thumb"
+              loading="lazy"
+            >
+            <div class="video-showcase-overlay"></div>
+          </div>
+
+          <button
+            type="button"
+            class="video-play-btn lighting-move-border-hover"
+            aria-label="Reproduzir vídeo"
+          >
+            <span class="video-play-btn__icon" aria-hidden="true">
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M8.25 5.65c0-.65.71-1.05 1.27-.71l9.05 5.55c.53.32.53 1.1 0 1.42L9.52 17.46c-.56.34-1.27-.06-1.27-.71V5.65z"/>
+              </svg>
+            </span>
+          </button>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- =========================================================================
+       MODAL DE VÍDEO CENTRALIZADO COM OVERLAY DE BACKGROUND BLUR
+       ========================================================================= -->
+  <div class="video-modal-overlay" id="videoModalOverlay" aria-hidden="true" role="dialog" aria-modal="true" aria-label="Reprodutor de vídeo VYVA Homes">
+    <div class="video-modal-backdrop" id="videoModalBackdrop"></div>
+    <div class="video-modal-dialog lighting-move-border">
+      <button type="button" class="video-modal-close lighting-move-border-hover" id="videoModalClose" aria-label="Fechar vídeo">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="18" y1="6" x2="6" y2="18"></line>
+          <line x1="6" y1="6" x2="18" y2="18"></line>
+        </svg>
+      </button>
+      <div class="video-modal-frame-wrap" id="videoModalFrameWrap"></div>
+    </div>
+  </div>
+
+  <!-- =========================================================================
+       09. FOOTER INSTITUCIONAL
+       - VYVA HOMES - Hospitality • Experiences • Destinations.
+       - Destinos / Experiência / Soluções / B2B / Sobre / Contato / Termos
+       ========================================================================= -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer__top">
+        <div>
+          <img src="images/vyva-logo.svg" alt="VYVA HOMES" class="footer__brand-logo">
+          <p class="footer__brand-desc">
+            VYVA HOMES — Hospitality • Experiences • Destinations.<br>
+            Conectamos pessoas, destinos e vivências através de um ecossistema vivo de hospitalidade.
+          </p>
+        </div>
+
+        <div>
+          <h4 class="footer__col-title">Navegação</h4>
+          <ul class="footer__list">
+            <li><a href="#hero" class="footer__link">Home</a></li>
+            <li><a href="#destinos" class="footer__link">Destinos</a></li>
+            <li><a href="#experiencia" class="footer__link">Experiência</a></li>
+            <li><a href="#reservas" class="footer__link">Reservas</a></li>
+            <li><a href="#sobre" class="footer__link">Sobre a Empresa</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <h4 class="footer__col-title">Soluções</h4>
+          <ul class="footer__list">
+            <li><a href="#by-vyva" class="footer__link">BY VYVA</a></li>
+            <li><a href="#vyva-decor" class="footer__link">VYVA Decor</a></li>
+            <li><a href="#vyva-connect" class="footer__link">VYVA Connect</a></li>
+            <li><a href="#corporate" class="footer__link">Para Empresas</a></li>
+            <li><a href="#corporate" class="footer__link">Área do Proprietário</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <h4 class="footer__col-title">Contato & Atendimento</h4>
+          <ul class="footer__list">
+            <li><a href="https://wa.me/557398130646" target="_blank" rel="noopener noreferrer" class="footer__link">WhatsApp: +55 73 9813-0646</a></li>
+            <li><a href="tel:+557398130646" class="footer__link">Telefone: +55 73 9813-0646</a></li>
+            <li><a href="mailto:contato@vyvahomes.com.br" class="footer__link">contato@vyvahomes.com.br</a></li>
+            <li><a href="https://instagram.com/vyvahomes" target="_blank" rel="noopener" class="footer__link">Instagram @vyvahomes</a></li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Bloco de Endereços dos Escritórios Globais -->
+      <div class="footer__offices">
+        <h4 class="footer__offices-title">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+            <circle cx="12" cy="10" r="3"></circle>
+          </svg>
+          Nossos Escritórios
+        </h4>
+
+        <div class="footer__offices-grid">
+          <!-- TEXAS -->
+          <div class="footer__office-card">
+            <div class="footer__office-header">
+              <h5 class="footer__office-name">TEXAS</h5>
+              <span class="footer__office-badge">Estados Unidos</span>
+            </div>
+            <address class="footer__office-address">
+              5716 Henry Cook Blvd #11207<br>
+              Plano, TX 75024<br>
+              United States
+            </address>
+          </div>
+
+          <!-- SÃO PAULO -->
+          <div class="footer__office-card">
+            <div class="footer__office-header">
+              <h5 class="footer__office-name">SÃO PAULO</h5>
+              <span class="footer__office-badge">Brasil</span>
+            </div>
+            <address class="footer__office-address">
+              Rua dos Pinheiros, 498<br>
+              Pinheiros – São Paulo/SP<br>
+              CEP 05422-902
+            </address>
+          </div>
+
+          <!-- BAHIA -->
+          <div class="footer__office-card">
+            <div class="footer__office-header">
+              <h5 class="footer__office-name">BAHIA</h5>
+              <span class="footer__office-badge">Brasil</span>
+            </div>
+            <address class="footer__office-address">
+              Avenida Soares Lopes, nº 996<br>
+              Ed. Empresarial Marina, SALA 02, térreo<br>
+              Cidade Nova, Ilhéus/BA, CEP 45.652-065
+            </address>
+          </div>
+        </div>
+      </div>
+
+      <div class="footer__bottom">
+        <div>
+          &copy; 2026 VYVA Homes. Todos os direitos reservados.
+        </div>
+        <div class="footer__bottom-links">
+          <a href="#">Política de Privacidade</a>
+          <a href="#">Termos de Uso</a>
+          <a href="#">Idioma: PT-BR / EN</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- =========================================================================
+       BOTÃO FIXO DE CONTATO RADIAL (FAB GSAP)
+       ========================================================================= -->
+  <div id="radialWrap" class="radial-wrap" aria-label="Menu de Contatos">
+    <!-- Anel pulsante decorativo -->
+    <div id="pulseRing" class="pulse-ring"></div>
+
+    <!-- Itens Ejetáveis (Sentido anti-horário: 180° a 270°) -->
+    <!-- 1. WhatsApp (180° - Extrema Esquerda) -->
+    <a href="https://wa.me/557398130646" target="_blank" rel="noopener noreferrer" class="fab-item fab-item--whatsapp" aria-label="Fale pelo WhatsApp">
+      <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor">
+        <path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91C2.13 13.66 2.59 15.36 3.45 16.86L2.05 22L7.3 20.62C8.75 21.41 10.38 21.83 12.04 21.83C17.5 21.83 21.95 17.38 21.95 11.92C21.95 9.27 20.92 6.78 19.05 4.91C17.18 3.03 14.69 2 12.04 2ZM12.04 20.15C10.56 20.15 9.11 19.76 7.85 19L7.55 18.83L4.43 19.65L5.26 16.61L5.06 16.29C4.24 14.99 3.81 13.47 3.81 11.91C3.81 7.37 7.5 3.68 12.04 3.68C14.25 3.68 16.31 4.54 17.87 6.1C19.42 7.66 20.28 9.72 20.28 11.92C20.28 16.46 16.58 20.15 12.04 20.15ZM16.56 14.41C16.31 14.29 15.09 13.69 14.86 13.61C14.64 13.52 14.47 13.48 14.31 13.73C14.14 13.97 13.67 14.53 13.52 14.7C13.38 14.86 13.24 14.88 12.99 14.76C12.74 14.64 11.95 14.38 11.01 13.54C10.27 12.89 9.78 12.08 9.63 11.83C9.49 11.59 9.62 11.45 9.74 11.33C9.85 11.22 10 11.05 10.12 10.91C10.24 10.76 10.28 10.66 10.36 10.5C10.45 10.33 10.41 10.19 10.35 10.07C10.28 9.95 9.79 8.74 9.58 8.24C9.38 7.76 9.18 7.82 9.03 7.81C8.89 7.81 8.72 7.81 8.56 7.81C8.39 7.81 8.12 7.87 7.89 8.12C7.66 8.37 7.02 8.97 7.02 10.19C7.02 11.41 7.91 12.59 8.03 12.75C8.16 12.92 9.78 15.42 12.26 16.49C12.85 16.75 13.31 16.9 13.67 17.02C14.26 17.21 14.8 17.18 15.22 17.12C15.7 17.05 16.69 16.52 16.89 15.94C17.1 15.37 17.1 14.88 17.04 14.78C16.97 14.67 16.81 14.54 16.56 14.41Z"/>
+      </svg>
+      <span class="fab-tooltip">WhatsApp</span>
+    </a>
+
+    <!-- 2. Instagram (210°) -->
+    <a href="https://instagram.com/vyvahomes" target="_blank" rel="noopener noreferrer" class="fab-item fab-item--instagram" aria-label="Siga no Instagram">
+      <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
+        <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
+        <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
+      </svg>
+      <span class="fab-tooltip">Instagram</span>
+    </a>
+
+    <!-- 3. Telefone (240°) -->
+    <a href="tel:+557398130646" class="fab-item fab-item--phone" aria-label="Ligue para nós">
+      <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
+      </svg>
+      <span class="fab-tooltip">Telefone</span>
+    </a>
+
+    <!-- 4. E-mail (270° - Topo Vertical) -->
+    <a href="mailto:contato@vyvahomes.com.br" class="fab-item fab-item--email" aria-label="Envie um E-mail">
+      <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+        <polyline points="22,6 12,13 2,6"></polyline>
+      </svg>
+      <span class="fab-tooltip">E-mail</span>
+    </a>
+
+    <!-- Botão Disparador Principal (Tons de Laranja) -->
+    <button id="fabBtn" class="fab-btn" aria-expanded="false" aria-label="Abrir menu de contato" type="button">
+      <!-- Ícone Chat Inicial -->
+      <svg class="fab-icon icon-chat" viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path>
+      </svg>
+      <!-- Ícone Fechar (X) -->
+      <svg class="fab-icon icon-close" viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <line x1="18" y1="6" x2="6" y2="18"></line>
+        <line x1="6" y1="6" x2="18" y2="18"></line>
+      </svg>
+    </button>
+  </div>
+
+  <!-- =========================================================================
+       DEPENDÊNCIAS VIA CDN (ORDEM OBRIGATÓRIA)
+       1. jQuery (v3.7.1 minificada)
+       2. GSAP Core (v3.12.5)
+       3. GSAP ScrollTrigger (v3.12.5)
+       4. Lenis Smooth Scroll (v1.1.18)
+       5. Lógica principal (js/main.js)
+       ========================================================================= -->
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/Observer.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/Draggable.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/lenis@1.1.18/dist/lenis.min.js"></script>
+  <script src="js/main.js"></script>
+
+</body>
+</html>

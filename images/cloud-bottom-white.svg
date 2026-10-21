@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1920 340" preserveAspectRatio="none" width="100%" height="100%">
+  <defs>
+    <filter id="bottomCloudBlur" x="-10%" y="-30%" width="120%" height="160%">
+      <feGaussianBlur in="SourceGraphic" stdDeviation="14" />
+    </filter>
+    <filter id="bottomCloudSoft" x="-10%" y="-30%" width="120%" height="160%">
+      <feGaussianBlur in="SourceGraphic" stdDeviation="8" />
+    </filter>
+  </defs>
+
+  <!-- Top white bar ensuring seamless merge from section 2 content -->
+  <rect x="0" y="0" width="1920" height="120" fill="#ffffff"/>
+
+  <!-- Soft billow clusters hanging down into the city video -->
+  <g filter="url(#bottomCloudBlur)" fill="#ffffff">
+    <ellipse cx="200" cy="120" rx="240" ry="110" opacity="0.95" />
+    <ellipse cx="500" cy="150" rx="270" ry="130" opacity="0.98" />
+    <ellipse cx="820" cy="110" rx="250" ry="115" opacity="0.92" />
+    <ellipse cx="1120" cy="160" rx="280" ry="135" opacity="0.98" />
+    <ellipse cx="1450" cy="120" rx="260" ry="120" opacity="0.94" />
+    <ellipse cx="1750" cy="145" rx="240" ry="115" opacity="0.96" />
+  </g>
+
+  <!-- Organic bottom edge silhouette -->
+  <path d="M 0 0 L 1920 0 L 1920 120 
+           C 1800 160 1700 110 1560 145 
+           C 1420 175 1280 125 1140 160 
+           C 1000 195 860 130 720 155 
+           C 580 180 440 125 300 150 
+           C 180 170 80 130 0 140 Z" 
+        fill="#ffffff" opacity="0.9" filter="url(#bottomCloudSoft)"/>
+</svg>

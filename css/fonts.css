@@ -1,0 +1,46 @@
+/**
+ * Declaração das fontes locais via @font-face
+ * Localização física dos arquivos: ../fonts/
+ */
+
+/* --- Fonte Principal: Syne (sem ExtraBold) --- */
+@font-face {
+  font-family: 'Syne';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('../fonts/Syne-Regular.ttf') format('truetype');
+}
+
+@font-face {
+  font-family: 'Syne';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url('../fonts/Syne-Medium.ttf') format('truetype');
+}
+
+@font-face {
+  font-family: 'Syne';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url('../fonts/Syne-Bold.ttf') format('truetype');
+}
+
+/* --- Sub-fonte: Raleway --- */
+@font-face {
+  font-family: 'Raleway';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('../fonts/Raleway-Regular.ttf') format('truetype');
+}
+
+@font-face {
+  font-family: 'Raleway';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url('../fonts/Raleway-SemiBold.ttf') format('truetype');
+}
