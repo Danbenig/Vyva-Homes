@@ -643,6 +643,7 @@ button, input, select {
   height: 100%;
   z-index: 1;
   overflow: hidden;
+  background-color: #0a0b0e;
 }
 
 .hero__video {
@@ -651,6 +652,7 @@ button, input, select {
   object-fit: cover;
   object-position: center;
   transform: scale(1.02);
+  background-color: #0a0b0e;
 }
 
 
